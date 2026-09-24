@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="ps" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solve X</title>
+
+  <title>Solve X — Account</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -16,70 +17,115 @@
 
     body {
       min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #06141f, #071f2f, #02080d);
-      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      font-family: Arial, sans-serif;
+      color: white;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(45,110,255,.18), transparent 32%),
+        radial-gradient(circle at 80% 80%, rgba(130,70,255,.18), transparent 32%),
+        #050914;
     }
 
     .box {
       width: 100%;
       max-width: 430px;
-      padding: 35px;
-      border-radius: 24px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 25px 70px rgba(0,0,0,.45);
+      padding: 34px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.055);
+      border: 1px solid rgba(255,255,255,.11);
+      box-shadow: 0 25px 70px rgba(0,0,0,.4);
     }
 
-    h1 {
+    .logo {
       text-align: center;
-      font-size: 38px;
-      margin-bottom: 10px;
+      font-size: 34px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .logo span {
+      color: #61a9ff;
     }
 
     .subtitle {
       text-align: center;
-      color: #aab7c4;
-      margin-bottom: 30px;
+      color: #929eb2;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 8px;
+      color: #c5cfdd;
+      font-size: 14px;
     }
 
     input {
       width: 100%;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 12px;
-      border: 1px solid #294052;
-      background: #08141e;
+      padding: 14px;
+      border-radius: 11px;
+      border: 1px solid rgba(255,255,255,.13);
+      background: rgba(0,0,0,.25);
       color: white;
-      font-size: 16px;
       outline: none;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #5da9ff;
     }
 
     button {
       width: 100%;
-      padding: 15px;
+      padding: 14px;
+      margin-top: 22px;
       border: 0;
-      border-radius: 12px;
-      background: #19c37d;
-      color: #03130c;
-      font-size: 17px;
-      font-weight: bold;
+      border-radius: 11px;
+      background: linear-gradient(135deg,#287cff,#7b42ff);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
     }
 
-    button:hover {
-      opacity: .9;
+    button:disabled {
+      opacity: .6;
+    }
+
+    .switch {
+      margin-top: 20px;
+      text-align: center;
+      color: #8d99ad;
+      font-size: 14px;
+    }
+
+    .switch button {
+      margin-top: 8px;
+      padding: 0;
+      background: transparent;
+      color: #65aaff;
+      font-size: 14px;
     }
 
     #message {
+      min-height: 22px;
+      margin-top: 16px;
       text-align: center;
-      margin-top: 18px;
-      min-height: 24px;
-      color: #9ee7c5;
+      color: #9de4bf;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .back {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #78869b;
+      text-decoration: none;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -87,51 +133,257 @@
 <body>
 
   <div class="box">
-    <h1>Solve X</h1>
-    <p class="subtitle">خپل حساب ته ننوتل</p>
 
-    <input id="email" type="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
+    <div class="logo">
+      Solve<span>X</span>
+    </div>
 
-    <button onclick="login()">Login</button>
+    <div class="subtitle" id="subtitle">
+      Login to your Solve X account
+    </div>
+
+    <form id="authForm">
+
+      <div id="nameBox" style="display:none;">
+        <label>Full name</label>
+        <input
+          id="name"
+          type="text"
+          placeholder="Your full name"
+        >
+      </div>
+
+      <label>Email</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="you@example.com"
+        required
+      >
+
+      <label>Password</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="At least 6 characters"
+        minlength="6"
+        required
+      >
+
+      <button id="submitButton" type="submit">
+        Login
+      </button>
+
+    </form>
 
     <div id="message"></div>
+
+    <div class="switch">
+      <span id="switchText">Don't have an account?</span>
+
+      <button id="switchButton" type="button">
+        Create account
+      </button>
+    </div>
+
+    <a class="back" href="index.html">
+      ← Back to Solve X
+    </a>
+
   </div>
 
-  <script>
-    const SUPABASE_URL = "https://ettgqoyssaonfzsolhsp.supabase.co";
-    const SUPABASE_KEY = "دلته خپل Publishable key paste کړه";
 
-    const supabase = window.supabase.createClient(
+  <script>
+
+    /*
+      IMPORTANT:
+      Replace ONLY these two values.
+
+      Never put a Supabase Secret key here.
+    */
+
+    const SUPABASE_URL =
+      "https://ettgqoyssaonfzsolhsp.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      
+sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa
+
+    const client = window.supabase.createClient(
       SUPABASE_URL,
-      SUPABASE_KEY
+      SUPABASE_PUBLISHABLE_KEY
     );
 
-    async function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const message = document.getElementById("message");
 
-      if (!email || !password) {
-        message.textContent = "Email او Password ولیکه.";
-        return;
+    const form = document.getElementById("authForm");
+    const nameBox = document.getElementById("nameBox");
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+
+    const submitButton =
+      document.getElementById("submitButton");
+
+    const switchButton =
+      document.getElementById("switchButton");
+
+    const switchText =
+      document.getElementById("switchText");
+
+    const subtitle =
+      document.getElementById("subtitle");
+
+    const message =
+      document.getElementById("message");
+
+
+    let signupMode = false;
+
+
+    switchButton.addEventListener("click", () => {
+
+      signupMode = !signupMode;
+
+      message.textContent = "";
+
+      if (signupMode) {
+
+        nameBox.style.display = "block";
+
+        nameInput.required = true;
+
+        submitButton.textContent =
+          "Create account";
+
+        switchText.textContent =
+          "Already have an account?";
+
+        switchButton.textContent =
+          "Login";
+
+        subtitle.textContent =
+          "Create your Solve X account.";
+
+      } else {
+
+        nameBox.style.display = "none";
+
+        nameInput.required = false;
+
+        submitButton.textContent =
+          "Login";
+
+        switchText.textContent =
+          "Don't have an account?";
+
+        switchButton.textContent =
+          "Create account";
+
+        subtitle.textContent =
+          "Login to your Solve X account.";
       }
 
-      message.textContent = "ننوتل روان دي...";
+    });
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
 
-      if (error) {
-        message.textContent = error.message;
-        return;
+    form.addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      message.textContent = "Please wait...";
+
+      submitButton.disabled = true;
+
+
+      try {
+
+        if (signupMode) {
+
+          const name =
+            nameInput.value.trim();
+
+          const email =
+            emailInput.value.trim();
+
+          const password =
+            passwordInput.value;
+
+
+          const { error } =
+            await client.auth.signUp({
+
+              email: email,
+
+              password: password,
+
+              options: {
+                data: {
+                  full_name: name
+                }
+              }
+
+            });
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          message.textContent =
+            "Account created. Check your email if confirmation is required.";
+
+        } else {
+
+          const email =
+            emailInput.value.trim();
+
+          const password =
+            passwordInput.value;
+
+
+          const { error } =
+            await client.auth.signInWithPassword({
+
+              email: email,
+
+              password: password
+
+            });
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          message.textContent =
+            "Login successful!";
+
+
+          setTimeout(() => {
+
+            window.location.href =
+              "index.html";
+
+          }, 700);
+
+        }
+
+      } catch (error) {
+
+        message.textContent =
+          error.message;
+
+      } finally {
+
+        submitButton.disabled = false;
+
       }
 
-      message.textContent = "بریالی ننوتل ✅";
-    }
+    });
+
   </script>
 
 </body>
-</html>
+  </html>
