@@ -324,22 +324,6 @@ if (error) {
   throw error;
 }
 
-if (data.user) {
-
-  const { error: profileError } =
-    await client
-      .from("Profil")
-      .insert({
-        "Id": data.user.id,
-        full_name: name,
-        role: "user",
-        created_at: new Date().toISOString()
-      });
-
-  if (profileError) {
-    throw profileError;
-  }
-}
 
 
           message.textContent =
@@ -364,10 +348,7 @@ if (data.user) {
             });
 
 
-          if (error) {
-            throw error;
-          }
-
+          
 
           message.textContent =
             "Login successful!";
