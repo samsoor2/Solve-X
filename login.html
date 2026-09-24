@@ -309,25 +309,37 @@ sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa
             passwordInput.value;
 
 
-          const { error } =
-            await client.auth.signUp({
+          const { data, error } =
+  await client.auth.signUp({
+    email: email,
+    password: password,
+    options: {
+      data: {
+        full_name: name
+      }
+    }
+  });
 
-              email: email,
+if (error) {
+  throw error;
+}
 
-              password: password,
+if (data.user) {
 
-              options: {
-                data: {
-                  full_name: name
-                }
-              }
+  const { error: profileError } =
+    await client
+      .from("Profil")
+      .insert({
+        "Id": data.user.id,
+        full_name: name,
+        role: "user",
+        created_at: new Date().toISOString()
+      });
 
-            });
-
-
-          if (error) {
-            throw error;
-          }
+  if (profileError) {
+    throw profileError;
+  }
+}
 
 
           message.textContent =
