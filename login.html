@@ -1,7 +1,14 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Solve X — Account</title>  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Solve X — Account</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
     * {
       box-sizing: border-box;
       margin: 0;
@@ -86,6 +93,18 @@
 
     button:disabled {
       opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .forgot {
+      display: block;
+      width: auto;
+      margin: 12px auto 0;
+      padding: 0;
+      background: transparent;
+      color: #65aaff;
+      font-size: 14px;
+      font-weight: normal;
     }
 
     .switch {
@@ -120,70 +139,94 @@
       text-decoration: none;
       font-size: 14px;
     }
-  </style></head><body>  <div class="box"><div class="logo">
-  Solve<span>X</span>
-</div>
+  </style>
+</head>
 
-<div class="subtitle" id="subtitle">
-  Login to your Solve X account
-</div>
+<body>
 
-<form id="authForm">
+  <div class="box">
 
-  <div id="nameBox" style="display:none;">
-    <label>Full name</label>
+    <div class="logo">
+      Solve<span>X</span>
+    </div>
 
-    <input
-      id="name"
-      type="text"
-      placeholder="Your full name"
-    >
+    <div class="subtitle" id="subtitle">
+      Login to your Solve X account
+    </div>
+
+    <form id="authForm">
+
+      <div id="nameBox" style="display:none;">
+
+        <label>Full name</label>
+
+        <input
+          id="name"
+          type="text"
+          placeholder="Your full name"
+        >
+
+      </div>
+
+      <label>Email</label>
+
+      <input
+        id="email"
+        type="email"
+        placeholder="you@example.com"
+        required
+      >
+
+      <label>Password</label>
+
+      <input
+        id="password"
+        type="password"
+        placeholder="At least 6 characters"
+        minlength="6"
+        required
+      >
+
+      <button id="submitButton" type="submit">
+        Login
+      </button>
+
+      <button
+        id="forgotPassword"
+        class="forgot"
+        type="button"
+      >
+        Forgot password?
+      </button>
+
+    </form>
+
+    <div id="message"></div>
+
+    <div class="switch">
+
+      <span id="switchText">
+        Don't have an account?
+      </span>
+
+      <button id="switchButton" type="button">
+        Create account
+      </button>
+
+    </div>
+
+    <a class="back" href="index.html">
+      ← Back to Solve X
+    </a>
+
   </div>
 
-  <label>Email</label>
 
-  <input
-    id="email"
-    type="email"
-    placeholder="you@example.com"
-    required
-  >
+  <script>
 
-  <label>Password</label>
-
-  <input
-    id="password"
-    type="password"
-    placeholder="At least 6 characters"
-    minlength="6"
-    required
-  >
-
-  <button id="submitButton" type="submit">
-    Login
-  </button>
-
-</form>
-
-<div id="message"></div>
-
-<div class="switch">
-
-  <span id="switchText">
-    Don't have an account?
-  </span>
-
-  <button id="switchButton" type="button">
-    Create account
-  </button>
-
-</div>
-
-<a class="back" href="index.html">
-  ← Back to Solve X
-</a>
-
-  </div>  <script>
+    /* ==============================
+       SUPABASE CONFIGURATION
+       ============================== */
 
     const SUPABASE_URL =
       "https://ettgqoyssaonfzsolhsp.supabase.co";
@@ -195,6 +238,11 @@
       SUPABASE_URL,
       SUPABASE_PUBLISHABLE_KEY
     );
+
+
+    /* ==============================
+       ELEMENTS
+       ============================== */
 
     const form =
       document.getElementById("authForm");
@@ -226,8 +274,16 @@
     const message =
       document.getElementById("message");
 
+    const forgotPassword =
+      document.getElementById("forgotPassword");
+
+
     let signupMode = false;
 
+
+    /* ==============================
+       SWITCH LOGIN / SIGNUP
+       ============================== */
 
     switchButton.addEventListener("click", () => {
 
@@ -253,6 +309,9 @@
         subtitle.textContent =
           "Create your Solve X account.";
 
+        forgotPassword.style.display =
+          "none";
+
       } else {
 
         nameBox.style.display = "none";
@@ -271,10 +330,17 @@
         subtitle.textContent =
           "Login to your Solve X account.";
 
+        forgotPassword.style.display =
+          "block";
+
       }
 
     });
 
+
+    /* ==============================
+       SIGNUP / LOGIN
+       ============================== */
 
     form.addEventListener("submit", async (event) => {
 
@@ -288,16 +354,19 @@
 
       try {
 
+        const email =
+          emailInput.value.trim();
+
+        const password =
+          passwordInput.value;
+
+
+        /* ---------- SIGNUP ---------- */
+
         if (signupMode) {
 
           const name =
             nameInput.value.trim();
-
-          const email =
-            emailInput.value.trim();
-
-          const password =
-            passwordInput.value;
 
 
           const { data, error } =
@@ -326,21 +395,18 @@
           if (data.user) {
 
             message.textContent =
-              "Account created successfully. Check your email if confirmation is required.";
+              "Account created successfully. Check your email to confirm your account.";
 
           }
 
 
-        } else {
+        }
 
-          const email =
-            emailInput.value.trim();
+        /* ---------- LOGIN ---------- */
 
-          const password =
-            passwordInput.value;
+        else {
 
-
-          const { error } =
+          const { data, error } =
             await client.auth.signInWithPassword({
 
               email: email,
@@ -355,16 +421,19 @@
           }
 
 
-          message.textContent =
-            "Login successful!";
+          if (data.session) {
 
+            message.textContent =
+              "Login successful!";
 
-          setTimeout(() => {
+            setTimeout(() => {
 
-            window.location.href =
-              "index.html";
+              window.location.href =
+                "index.html";
 
-          }, 700);
+            }, 700);
+
+          }
 
         }
 
@@ -383,5 +452,70 @@
 
     });
 
-  </script></body>
-  </html>
+
+    /* ==============================
+       FORGOT PASSWORD
+       ============================== */
+
+    forgotPassword.addEventListener("click", async () => {
+
+      const email =
+        emailInput.value.trim();
+
+
+      if (!email) {
+
+        message.textContent =
+          "Enter your email first.";
+
+        emailInput.focus();
+
+        return;
+
+      }
+
+
+      forgotPassword.disabled = true;
+
+      message.textContent =
+        "Sending password reset email...";
+
+
+      try {
+
+        const { error } =
+          await client.auth.resetPasswordForEmail(
+            email,
+            {
+              redirectTo:
+                "https://solve-x-tawny.vercel.app/login.html"
+            }
+          );
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        message.textContent =
+          "Password reset email sent. Check your email.";
+
+      } catch (error) {
+
+        message.textContent =
+          error.message ||
+          "Could not send reset email.";
+
+      } finally {
+
+        forgotPassword.disabled = false;
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
