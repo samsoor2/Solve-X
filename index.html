@@ -1,1 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <title>SolveX — Solve Real Problems</title>
+
+  <meta
+    name="description"
+    content="SolveX connects real-world problems with people who can solve them."
+  />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(49, 95, 180, 0.18), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(139, 65, 255, 0.16), transparent 30%),
+        #050914;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: auto;
+    }
+
+    nav {
+      height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      color: #5da9ff;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      color: #aeb9cc;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, #287cff, #7b42ff);
+      box-shadow: 0 8px 30px rgba(68, 91, 255, 0.25);
+    }
+
+    .hero {
+      text-align: center;
+      padding: 95px 0 70px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 50px;
+      background: rgba(79, 140, 255, 0.1);
+      border: 1px solid rgba(79, 140, 255, 0.25);
+      color: #8bbcff;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: clamp(42px, 7vw, 76px);
+      line-height: 1.02;
+      letter-spacing: -3px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #55a7ff, #9c68ff, #43d8d0);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin: 25px auto 0;
+      color: #aab5c8;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .problem-box {
+      max-width: 720px;
+      margin: 35px auto 0;
+      padding: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      display: flex;
+    }
+
+    .problem-box input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: white;
+      padding: 16px;
+      font-size: 15px;
+    }
+
+    .problem-box input::placeholder {
+      color: #78869d;
+    }
+
+    .section {
+      padding: 75px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 42px;
+    }
+
+    .section-title h2 {
+      font-size: 38px;
+      margin-bottom: 12px;
+    }
+
+    .section-title p {
+      color: #8996aa;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 18px;
+      padding: 25px;
+      transition: 0.25s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(91, 151, 255, 0.35);
+    }
+
+    .icon {
+      width: 45px;
+      height: 45px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: rgba(74, 130, 255, 0.13);
+      margin-bottom: 18px;
+      font-size: 21px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 19px;
+    }
+
+    .card p {
+      color: #8f9bb0;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    .step {
+      text-align: center;
+      padding: 25px 15px;
+    }
+
+    .number {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, #287cff, #7b42ff);
+      font-weight: bold;
+    }
+
+    .step h3 {
+      margin-bottom: 9px;
+    }
+
+    .step p {
+      color: #8996aa;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .cta {
+      margin: 40px 0 80px;
+      padding: 60px 25px;
+      text-align: center;
+      border-radius: 25px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background:
+        radial-gradient(circle at center, rgba(74, 105, 255, 0.18), transparent 60%),
+        rgba(255,255,255,0.035);
+    }
+
+    .cta h2 {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
+    .cta p {
+      color: #929eb1;
+      margin-bottom: 25px;
+    }
+
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 30px 0;
+      color: #738096;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 800px) {
+      .nav-links {
+        display: none;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .steps {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .problem-box {
+        flex-direction: column;
+      }
+
+      .problem-box .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .hero {
+        padding-top: 65px;
+      }
+
+      h1 {
+        letter-spacing: -2px;
+      }
+
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-buttons .btn-outline {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <nav>
+      <a href="#" class="logo">Solve<span>X</span></a>
+
+      <div class="nav-links">
+        <a href="#how">How It Works</a>
+        <a href="#problems">Problems</a>
+        <a href="#solutions">Solutions</a>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-outline" onclick="login()">Log in</button>
+        <button class="btn btn-primary" onclick="startProblem()">Post a Problem</button>
+      </div>
+    </nav>
+
+    <section class="hero">
+
+      <div class="badge">
+        AI-powered problem solving marketplace
+      </div>
+
+      <h1>
+        Don't search for a service.
+        <span class="gradient-text">Solve a problem.</span>
+      </h1>
+
+      <p>
+        Describe the real problem you're facing.
+        SolveX helps analyze it, find the right people,
+        and turn ideas into measurable solutions.
+      </p>
+
+      <div class="problem-box">
+
+        <input
+          id="problemInput"
+          type="text"
+          placeholder="What problem are you trying to solve?"
+        />
+
+        <button class="btn btn-primary" onclick="analyzeProblem()">
+          Analyze Problem
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <section class="section" id="problems">
+
+      <div class="section-title">
+        <h2>What can SolveX help solve?</h2>
+        <p>Real problems. Real people. Real solutions.</p>
+      </div>
+
+      <div class="cards">
+
+        <div class="card">
+          <div class="icon">📈</div>
+          <h3>Business Growth</h3>
+          <p>
+            Need more customers, better conversion,
+            stronger marketing, or a new growth strategy?
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="icon">💻</div>
+          <h3>Technology</h3>
+          <p>
+            Build software, fix technical problems,
+            automate workflows, or design digital products.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="icon">🎨</div>
+          <h3>Creative Problems</h3>
+          <p>
+            Find designers, writers, strategists,
+            researchers, and creative problem solvers.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="section" id="how">
+
+      <div class="section-title">
+        <h2>How SolveX Works</h2>
+        <p>From problem to solution in four simple steps.</p>
+      </div>
+
+      <div class="steps">
+
+        <div class="step">
+          <div class="number">1</div>
+          <h3>Post</h3>
+          <p>
+            Explain the problem you need solved.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="number">2</div>
+          <h3>Analyze</h3>
+          <p>
+            AI helps break the problem into causes,
+            skills, and possible solution paths.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="number">3</div>
+          <h3>Match</h3>
+          <p>
+            Find people with the skills needed
+            to solve your specific problem.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="number">4</div>
+          <h3>Solve</h3>
+          <p>
+            Collaborate, verify the result,
+            and build your reputation.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="section" id="solutions">
+
+      <div class="section-title">
+        <h2>Built Around Outcomes</h2>
+        <p>
+          The goal isn't just to hire someone.
+          The goal is to solve the problem.
+        </p>
+      </div>
+
+      <div class="cards">
+
+        <div class="card">
+          <div class="icon">🧠</div>
+          <h3>AI Problem Analysis</h3>
+          <p>
+            Turn an unclear problem into a structured
+            problem profile.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="icon">🤝</div>
+          <h3>Smart Matching</h3>
+          <p>
+            Connect problems with people whose skills
+            fit the required solution.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="icon">🎯</div>
+          <h3>Outcome Focused</h3>
+          <p>
+            Define success before work begins and
+            verify the result when the project ends.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="cta">
+
+      <h2>Have a problem?</h2>
+
+      <p>
+        Don't know exactly who to hire?
+        Start by explaining the problem.
+      </p>
+
+      <button class="btn btn-primary" onclick="startProblem()">
+        Post Your Problem
+      </button>
+
+    </section>
+
+  </div>
+
+
+  <footer>
+    © 2026 SolveX. Solve real problems with smart people.
+  </footer>
+
+
+  <script>
+
+    function analyzeProblem() {
+
+      const input = document.getElementById("problemInput");
+      const problem = input.value.trim();
+
+      if (!problem) {
+        alert("Please describe your problem first.");
+        input.focus();
+        return;
+      }
+
+      alert(
+        "Your problem has been received.\n\n" +
+        "Next step: SolveX AI analysis will turn this into a structured problem."
+      );
+    }
+
+    function startProblem() {
+      document.getElementById("problemInput").focus();
+      window.scrollTo({
+        top: 250,
+        behavior: "smooth"
+      });
+    }
+
+    function login() {
+      alert(
+        "Login will be connected to Supabase Auth in the next step."
+      );
+    }
+
+  </script>
+
+</body>
+            </html>
