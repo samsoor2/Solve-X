@@ -584,23 +584,20 @@ const { data: analysisResult, error: analysisError } =
     }
   });
 
+
+
+
 if (analysisError) {
   console.error("AI analysis error:", analysisError);
   alert("Problem was published, but AI analysis failed.");
   return;
-  }
-    
-    
-    
-    
-    
-    {
-      console.error(error);
-      alert("Could not publish your problem: " + error.message);
-      return;
-    }
+}
 
-    alert("Problem published successfully!");
+alert("Problem published successfully!");
+
+
+
+    
 
     input.value = "";
   }
