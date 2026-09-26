@@ -559,14 +559,42 @@
       return;
     }
 
-    const { error } = await supabase
-      .from("Problems")
-      .insert({
-        client_id: user.id,
-        title: problem
-      });
+    
+    
+    const { data: problemData, error } = await supabase
+  .from("Problems")
+  .insert({
+    client_id: user.id,
+    title: problem
+  })
+  .select()
+  .single();
 
-    if (error) {
+if (error) {
+  console.error(error);
+  alert("Could not publish your problem: " + error.message);
+  return;
+}
+
+// AI analysis
+const { data: analysisResult, error: analysisError } =
+  await supabase.functions.invoke("analyze-problem", {
+    body: {
+      problem_id: problemData.id
+    }
+  });
+
+if (analysisError) {
+  console.error("AI analysis error:", analysisError);
+  alert("Problem was published, but AI analysis failed.");
+  return;
+  }
+    
+    
+    
+    
+    
+    {
       console.error(error);
       alert("Could not publish your problem: " + error.message);
       return;
