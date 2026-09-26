@@ -24,7 +24,7 @@
         radial-gradient(circle at 20% 10%, rgba(49, 95, 180, 0.18), transparent 30%),
         radial-gradient(circle at 80% 20%, rgba(139, 65, 255, 0.16), transparent 30%),
         #050914;
-      color: #ffffff;
+      color: #fff;
       min-height: 100vh;
     }
 
@@ -39,10 +39,11 @@
     }
 
     nav {
-      height: 78px;
+      min-height: 78px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 20px;
       border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
@@ -70,6 +71,7 @@
     .nav-buttons {
       display: flex;
       gap: 10px;
+      align-items: center;
     }
 
     .btn {
@@ -91,6 +93,12 @@
       color: white;
       background: linear-gradient(135deg, #287cff, #7b42ff);
       box-shadow: 0 8px 30px rgba(68, 91, 255, 0.25);
+    }
+
+    .btn-danger {
+      background: rgba(255, 70, 70, 0.12);
+      border: 1px solid rgba(255, 70, 70, 0.25);
+      color: #ffb0b0;
     }
 
     .hero {
@@ -268,6 +276,119 @@
       margin-bottom: 25px;
     }
 
+    .user-box {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      color: #9eabc0;
+      font-size: 13px;
+    }
+
+    .user-email {
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.72);
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      width: min(650px, 100%);
+      margin: 40px auto;
+      background: #0b1222;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.45);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 25px;
+    }
+
+    .modal-header h2 {
+      font-size: 27px;
+    }
+
+    .close {
+      background: transparent;
+      border: 0;
+      color: #8996aa;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 17px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      color: #c4cede;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 13px;
+      outline: none;
+      background: #111a2c;
+      color: white;
+      font-size: 14px;
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .message {
+      display: none;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 17px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .message.success {
+      display: block;
+      background: rgba(40, 200, 130, 0.12);
+      border: 1px solid rgba(40, 200, 130, 0.25);
+      color: #91f0c2;
+    }
+
+    .message.error {
+      display: block;
+      background: rgba(255, 70, 70, 0.12);
+      border: 1px solid rgba(255, 70, 70, 0.25);
+      color: #ffaaaa;
+    }
+
     footer {
       border-top: 1px solid rgba(255,255,255,0.08);
       padding: 30px 0;
@@ -296,6 +417,10 @@
       .problem-box .btn {
         width: 100%;
       }
+
+      .user-box {
+        display: none !important;
+      }
     }
 
     @media (max-width: 500px) {
@@ -314,254 +439,800 @@
       .nav-buttons .btn-outline {
         display: none;
       }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <nav>
-      <a href="#" class="logo">Solve<span>X</span></a>
+  <nav>
+    <a href="#" class="logo">Solve<span>X</span></a>
 
-      <div class="nav-links">
-        <a href="#how">How It Works</a>
-        <a href="#problems">Problems</a>
-        <a href="#solutions">Solutions</a>
+    <div class="nav-links">
+      <a href="#how">How It Works</a>
+      <a href="#problems">Problems</a>
+      <a href="#solutions">Solutions</a>
+    </div>
+
+    <div class="nav-buttons">
+
+      <div class="user-box" id="userBox">
+        <span class="user-email" id="userEmail"></span>
+        <button class="btn btn-danger" onclick="logout()">Logout</button>
       </div>
 
-      <div class="nav-buttons">
-  <a href="login.html" class="btn btn-outline">Log in</a>
-  <button class="btn btn-primary" onclick="startProblem()">Post a Problem</button>
-      </div>
-    </nav>
+      <a href="login.html" id="loginButton" class="btn btn-outline">
+        Log in
+      </a>
 
-    <section class="hero">
+      <button class="btn btn-primary" onclick="openProblemModal()">
+        Post a Problem
+      </button>
 
-      <div class="badge">
-        AI-powered problem solving marketplace
-      </div>
-
-      <h1>
-        Don't search for a service.
-        <span class="gradient-text">Solve a problem.</span>
-      </h1>
-
-      <p>
-        Describe the real problem you're facing.
-        SolveX helps analyze it, find the right people,
-        and turn ideas into measurable solutions.
-      </p>
-
-      <div class="problem-box">
-
-        <input
-          id="problemInput"
-          type="text"
-          placeholder="What problem are you trying to solve?"
-        />
-
-        <button class="btn btn-primary" onclick="analyzeProblem()">
-          Analyze Problem
-        </button>
-
-      </div>
-
-    </section>
+    </div>
+  </nav>
 
 
-    <section class="section" id="problems">
+  <section class="hero">
 
-      <div class="section-title">
-        <h2>What can SolveX help solve?</h2>
-        <p>Real problems. Real people. Real solutions.</p>
-      </div>
+    <div class="badge">
+      AI-powered problem solving marketplace
+    </div>
 
-      <div class="cards">
+    <h1>
+      Don't search for a service.
+      <span class="gradient-text">Solve a problem.</span>
+    </h1>
 
-        <div class="card">
-          <div class="icon">📈</div>
-          <h3>Business Growth</h3>
-          <p>
-            Need more customers, better conversion,
-            stronger marketing, or a new growth strategy?
-          </p>
-        </div>
+    <p>
+      Describe the real problem you're facing.
+      SolveX helps analyze it, find the right people,
+      and turn ideas into measurable solutions.
+    </p>
 
-        <div class="card">
-          <div class="icon">💻</div>
-          <h3>Technology</h3>
-          <p>
-            Build software, fix technical problems,
-            automate workflows, or design digital products.
-          </p>
-        </div>
+    <div class="problem-box">
 
-        <div class="card">
-          <div class="icon">🎨</div>
-          <h3>Creative Problems</h3>
-          <p>
-            Find designers, writers, strategists,
-            researchers, and creative problem solvers.
-          </p>
-        </div>
+      <input
+        id="problemInput"
+        type="text"
+        placeholder="What problem are you trying to solve?"
+      />
 
-      </div>
+      <button class="btn btn-primary" onclick="openProblemFromInput()">
+        Post Problem
+      </button>
 
-    </section>
+    </div>
+
+  </section>
 
 
-    <section class="section" id="how">
+  <section class="section" id="problems">
 
-      <div class="section-title">
-        <h2>How SolveX Works</h2>
-        <p>From problem to solution in four simple steps.</p>
-      </div>
+    <div class="section-title">
+      <h2>What can SolveX help solve?</h2>
+      <p>Real problems. Real people. Real solutions.</p>
+    </div>
 
-      <div class="steps">
+    <div class="cards">
 
-        <div class="step">
-          <div class="number">1</div>
-          <h3>Post</h3>
-          <p>
-            Explain the problem you need solved.
-          </p>
-        </div>
-
-        <div class="step">
-          <div class="number">2</div>
-          <h3>Analyze</h3>
-          <p>
-            AI helps break the problem into causes,
-            skills, and possible solution paths.
-          </p>
-        </div>
-
-        <div class="step">
-          <div class="number">3</div>
-          <h3>Match</h3>
-          <p>
-            Find people with the skills needed
-            to solve your specific problem.
-          </p>
-        </div>
-
-        <div class="step">
-          <div class="number">4</div>
-          <h3>Solve</h3>
-          <p>
-            Collaborate, verify the result,
-            and build your reputation.
-          </p>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <section class="section" id="solutions">
-
-      <div class="section-title">
-        <h2>Built Around Outcomes</h2>
+      <div class="card">
+        <div class="icon">📈</div>
+        <h3>Business Growth</h3>
         <p>
-          The goal isn't just to hire someone.
-          The goal is to solve the problem.
+          Need more customers, better conversion,
+          stronger marketing, or a new growth strategy?
         </p>
       </div>
 
-      <div class="cards">
+      <div class="card">
+        <div class="icon">💻</div>
+        <h3>Technology</h3>
+        <p>
+          Build software, fix technical problems,
+          automate workflows, or design digital products.
+        </p>
+      </div>
 
-        <div class="card">
-          <div class="icon">🧠</div>
-          <h3>AI Problem Analysis</h3>
-          <p>
-            Turn an unclear problem into a structured
-            problem profile.
-          </p>
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h3>Creative Problems</h3>
+        <p>
+          Find designers, writers, strategists,
+          researchers, and creative problem solvers.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="section" id="how">
+
+    <div class="section-title">
+      <h2>How SolveX Works</h2>
+      <p>From problem to solution in four simple steps.</p>
+    </div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="number">1</div>
+        <h3>Post</h3>
+        <p>Explain the problem you need solved.</p>
+      </div>
+
+      <div class="step">
+        <div class="number">2</div>
+        <h3>Analyze</h3>
+        <p>
+          AI helps break the problem into causes,
+          skills, and possible solution paths.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="number">3</div>
+        <h3>Match</h3>
+        <p>
+          Find people with the skills needed
+          to solve your specific problem.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="number">4</div>
+        <h3>Solve</h3>
+        <p>
+          Collaborate, verify the result,
+          and build your reputation.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="section" id="solutions">
+
+    <div class="section-title">
+      <h2>Built Around Outcomes</h2>
+      <p>
+        The goal isn't just to hire someone.
+        The goal is to solve the problem.
+      </p>
+    </div>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="icon">🧠</div>
+        <h3>AI Problem Analysis</h3>
+        <p>
+          Turn an unclear problem into a structured
+          problem profile.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🤝</div>
+        <h3>Smart Matching</h3>
+        <p>
+          Connect problems with people whose skills
+          fit the required solution.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎯</div>
+        <h3>Outcome Focused</h3>
+        <p>
+          Define success before work begins and
+          verify the result when the project ends.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="cta">
+
+    <h2>Have a problem?</h2>
+
+    <p>
+      Don't know exactly who to hire?
+      Start by explaining the problem.
+    </p>
+
+    <button class="btn btn-primary" onclick="openProblemModal()">
+      Post Your Problem
+    </button>
+
+  </section>
+
+</div>
+
+
+<footer>
+  © 2026 SolveX. Solve real problems with smart people.
+</footer>
+
+
+<!-- POST PROBLEM MODAL -->
+
+<div class="modal" id="problemModal">
+
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <h2>Post a Problem</h2>
+
+      <button class="close" onclick="closeProblemModal()">
+        ×
+      </button>
+    </div>
+
+    <div id="formMessage" class="message"></div>
+
+    <form id="problemForm">
+
+      <div class="form-group">
+
+        <label for="title">
+          Problem title *
+        </label>
+
+        <input
+          id="title"
+          type="text"
+          placeholder="Example: I need help growing my online business"
+          required
+        />
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="description">
+          Describe the problem *
+        </label>
+
+        <textarea
+          id="description"
+          placeholder="Explain the problem clearly..."
+          required
+        ></textarea>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="category">
+          Category *
+        </label>
+
+        <select id="category" required>
+
+          <option value="">
+            Select category
+          </option>
+
+          <option value="Business">
+            Business
+          </option>
+
+          <option value="Technology">
+            Technology
+          </option>
+
+          <option value="Marketing">
+            Marketing
+          </option>
+
+          <option value="Design">
+            Design
+          </option>
+
+          <option value="Research">
+            Research
+          </option>
+
+          <option value="Other">
+            Other
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="form-row">
+
+        <div class="form-group">
+
+          <label for="budgetMin">
+            Minimum budget
+          </label>
+
+          <input
+            id="budgetMin"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="0"
+          />
+
         </div>
 
-        <div class="card">
-          <div class="icon">🤝</div>
-          <h3>Smart Matching</h3>
-          <p>
-            Connect problems with people whose skills
-            fit the required solution.
-          </p>
-        </div>
 
-        <div class="card">
-          <div class="icon">🎯</div>
-          <h3>Outcome Focused</h3>
-          <p>
-            Define success before work begins and
-            verify the result when the project ends.
-          </p>
+        <div class="form-group">
+
+          <label for="budgetMax">
+            Maximum budget
+          </label>
+
+          <input
+            id="budgetMax"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="1000"
+          />
+
         </div>
 
       </div>
 
-    </section>
+
+      <div class="form-group">
+
+        <label for="deadline">
+          Deadline
+        </label>
+
+        <input
+          id="deadline"
+          type="date"
+        />
+
+      </div>
 
 
-    <section class="cta">
+      <div class="form-group">
 
-      <h2>Have a problem?</h2>
+        <label for="successMetric">
+          What does success look like?
+        </label>
 
-      <p>
-        Don't know exactly who to hire?
-        Start by explaining the problem.
-      </p>
+        <textarea
+          id="successMetric"
+          placeholder="Example: Increase monthly customers by 30%"
+        ></textarea>
 
-      <button class="btn btn-primary" onclick="startProblem()">
-        Post Your Problem
+      </div>
+
+
+      <button
+        type="submit"
+        id="submitProblemButton"
+        class="btn btn-primary"
+        style="width:100%;"
+      >
+        Publish Problem
       </button>
 
-    </section>
+    </form>
 
   </div>
 
-
-  <footer>
-    © 2026 SolveX. Solve real problems with smart people.
-  </footer>
+</div>
 
 
-  <script>
+<!-- SUPABASE -->
 
-    function analyzeProblem() {
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-      const input = document.getElementById("problemInput");
-      const problem = input.value.trim();
+<script>
 
-      if (!problem) {
-        alert("Please describe your problem first.");
-        input.focus();
-        return;
+  const SUPABASE_URL =
+    "https://ettgqoyssaonfzsolhsp.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa";
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+  /*
+    CHECK CURRENT USER
+  */
+
+  async function checkUser() {
+
+    const {
+      data: { user },
+      error
+    } = await supabaseClient.auth.getUser();
+
+    if (error || !user) {
+
+      document.getElementById("loginButton").style.display = "inline-block";
+      document.getElementById("userBox").style.display = "none";
+
+      return null;
+    }
+
+    document.getElementById("loginButton").style.display = "none";
+
+    document.getElementById("userBox").style.display = "flex";
+
+    document.getElementById("userEmail").textContent =
+      user.email || "";
+
+    return user;
+  }
+
+
+  /*
+    OPEN MODAL
+  */
+
+  async function openProblemModal() {
+
+    const user = await checkUser();
+
+    if (!user) {
+
+      alert("Please login first.");
+
+      window.location.href = "login.html";
+
+      return;
+    }
+
+    document.getElementById("problemModal").style.display = "block";
+
+    document.body.style.overflow = "hidden";
+
+  }
+
+
+  /*
+    CLOSE MODAL
+  */
+
+  function closeProblemModal() {
+
+    document.getElementById("problemModal").style.display = "none";
+
+    document.body.style.overflow = "auto";
+
+  }
+
+
+  /*
+    QUICK PROBLEM INPUT
+  */
+
+  function openProblemFromInput() {
+
+    const input =
+      document.getElementById("problemInput");
+
+    const text =
+      input.value.trim();
+
+    openProblemModal().then(() => {
+
+      if (text) {
+
+        document.getElementById("title").value =
+          text.substring(0, 100);
+
+        document.getElementById("description").value =
+          text;
+
       }
 
+    });
+
+  }
+
+
+  /*
+    SUBMIT PROBLEM
+  */
+
+  document
+    .getElementById("problemForm")
+    .addEventListener("submit", async function(event) {
+
+      event.preventDefault();
+
+      const message =
+        document.getElementById("formMessage");
+
+      const button =
+        document.getElementById("submitProblemButton");
+
+      message.className = "message";
+
+      message.textContent = "";
+
+      button.disabled = true;
+
+      button.textContent = "Publishing...";
+
+
+      try {
+
+        const {
+          data: { user },
+          error: userError
+        } = await supabaseClient.auth.getUser();
+
+
+        if (userError || !user) {
+
+          throw new Error(
+            "Your session has expired. Please login again."
+          );
+
+        }
+
+
+        const title =
+          document.getElementById("title").value.trim();
+
+        const description =
+          document.getElementById("description").value.trim();
+
+        const category =
+          document.getElementById("category").value;
+
+        const budgetMinValue =
+          document.getElementById("budgetMin").value;
+
+        const budgetMaxValue =
+          document.getElementById("budgetMax").value;
+
+        const deadline =
+          document.getElementById("deadline").value;
+
+        const successMetric =
+          document.getElementById("successMetric").value.trim();
+
+
+        if (!title || !description || !category) {
+
+          throw new Error(
+            "Please fill in the required fields."
+          );
+
+        }
+
+
+        if (
+          budgetMinValue &&
+          budgetMaxValue &&
+          Number(budgetMinValue) > Number(budgetMaxValue)
+        ) {
+
+          throw new Error(
+            "Minimum budget cannot be greater than maximum budget."
+          );
+
+        }
+
+
+        const problemData = {
+
+          client_id: user.id,
+
+          title: title,
+
+          description: description,
+
+          category: category,
+
+          budget_min:
+            budgetMinValue
+              ? Number(budgetMinValue)
+              : null,
+
+          budget_max:
+            budgetMaxValue
+              ? Number(budgetMaxValue)
+              : null,
+
+          deadline:
+            deadline || null,
+
+          success_metric:
+            successMetric || null,
+
+          status: "open"
+
+        };
+
+
+        const {
+          data,
+          error
+        } = await supabaseClient
+          .from("Problems")
+          .insert(problemData)
+          .select()
+          .single();
+
+
+        if (error) {
+
+          console.error(error);
+
+          throw new Error(
+            error.message
+          );
+
+        }
+
+
+        message.className =
+          "message success";
+
+        message.textContent =
+          "Problem published successfully!";
+
+
+        document
+          .getElementById("problemForm")
+          .reset();
+
+
+        button.textContent =
+          "Published ✓";
+
+
+        setTimeout(() => {
+
+          closeProblemModal();
+
+          button.disabled = false;
+
+          button.textContent =
+            "Publish Problem";
+
+          message.className =
+            "message";
+
+        }, 1800);
+
+
+      } catch (error) {
+
+        console.error(
+          "Problem creation error:",
+          error
+        );
+
+
+        message.className =
+          "message error";
+
+        message.textContent =
+          "Could not publish your problem: " +
+          error.message;
+
+
+        button.disabled = false;
+
+        button.textContent =
+          "Publish Problem";
+
+      }
+
+    });
+
+
+  /*
+    LOGOUT
+  */
+
+  async function logout() {
+
+    const {
+      error
+    } = await supabaseClient.auth.signOut();
+
+
+    if (error) {
+
       alert(
-        "Your problem has been received.\n\n" +
-        "Next step: SolveX AI analysis will turn this into a structured problem."
+        "Logout failed: " +
+        error.message
       );
+
+      return;
     }
 
-    function startProblem() {
-      document.getElementById("problemInput").focus();
-      window.scrollTo({
-        top: 250,
-        behavior: "smooth"
-      });
-    }
 
-    function login() {
-      alert(
-        "Login will be connected to Supabase Auth in the next step."
-      );
-    }
+    window.location.reload();
 
-  </script>
+  }
+
+
+  /*
+    AUTH STATE
+  */
+
+  supabaseClient.auth.onAuthStateChange(
+    async function(event, session) {
+
+      if (session && session.user) {
+
+        document.getElementById("loginButton").style.display =
+          "none";
+
+        document.getElementById("userBox").style.display =
+          "flex";
+
+        document.getElementById("userEmail").textContent =
+          session.user.email || "";
+
+      } else {
+
+        document.getElementById("loginButton").style.display =
+          "inline-block";
+
+        document.getElementById("userBox").style.display =
+          "none";
+
+      }
+
+    }
+  );
+
+
+  /*
+    INITIAL LOAD
+  */
+
+  checkUser();
+
+
+  /*
+    CLOSE MODAL WHEN CLICKING OUTSIDE
+  */
+
+  document
+    .getElementById("problemModal")
+    .addEventListener("click", function(event) {
+
+      if (event.target === this) {
+
+        closeProblemModal();
+
+      }
+
+    });
+
+</script>
 
 </body>
-            </html>
+        </html>
