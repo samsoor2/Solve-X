@@ -1041,11 +1041,28 @@
         }
 
 
-        const problemData = {
+       const { data: profile, error: profileError } =
+  await supabaseClient
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .single();
 
-          client_id: user.id,
+if (profileError || !profile) {
+  throw new Error(
+    "Your profile was not found. Please create your profile first."
+  );
+}
 
-          title: title,
+const problemData = {
+
+  client_id: profile.id,
+
+  title: title, 
+
+          
+
+          
 
           description: description,
 
