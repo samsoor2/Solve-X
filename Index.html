@@ -527,41 +527,68 @@
     © 2026 SolveX. Solve real problems with smart people.
   </footer>
 
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-  <script>
+  const SUPABASE_URL = "https://ettgqoyssaonfzsolhsp.supabase.co";
+  const SUPABASE_KEY = "YOUR_PUBLISHABLE_KEY";
 
-    function analyzeProblem() {
+  const supabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-      const input = document.getElementById("problemInput");
-      const problem = input.value.trim();
+  async function analyzeProblem() {
+    const input = document.getElementById("problemInput");
+    const problem = input.value.trim();
 
-      if (!problem) {
-        alert("Please describe your problem first.");
-        input.focus();
-        return;
-      }
-
-      alert(
-        "Your problem has been received.\n\n" +
-        "Next step: SolveX AI analysis will turn this into a structured problem."
-      );
+    if (!problem) {
+      alert("Please describe your problem first.");
+      input.focus();
+      return;
     }
 
-    function startProblem() {
-      document.getElementById("problemInput").focus();
-      window.scrollTo({
-        top: 250,
-        behavior: "smooth"
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      alert("Please login first.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    const { error } = await supabase
+      .from("Problems")
+      .insert({
+        client_id: user.id,
+        title: problem
       });
+
+    if (error) {
+      console.error(error);
+      alert("Could not publish your problem: " + error.message);
+      return;
     }
 
-    function login() {
-      alert(
-        "Login will be connected to Supabase Auth in the next step."
-      );
-    }
+    alert("Problem published successfully!");
 
-  </script>
+    input.value = "";
+  }
+
+  function startProblem() {
+    document.getElementById("problemInput").focus();
+
+    window.scrollTo({
+      top: 250,
+      behavior: "smooth"
+    });
+  }
+
+  window.analyzeProblem = analyzeProblem;
+  window.startProblem = startProblem;
+</script>
 
 </body>
 </html>
