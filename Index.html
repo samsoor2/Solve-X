@@ -596,7 +596,20 @@ if (analysisError) {
 alert("Problem published successfully!");
 
 
+if (analysisResult?.analysis) {
+  const analysis = analysisResult.analysis;
 
+  alert(
+    "AI Analysis Complete!\n\n" +
+    "Summary:\n" + (analysis.ai_summary || "") + "\n\n" +
+    "Possible Causes:\n" +
+    (analysis.possible_causes || []).join("\n- ") + "\n\n" +
+    "Required Skills:\n" +
+    (analysis.required_skills || []).join("\n- ") + "\n\n" +
+    "Possible Solutions:\n" +
+    (analysis.possible_solutions || []).join("\n- ")
+  );
+  }
     
 
     input.value = "";
