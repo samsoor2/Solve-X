@@ -1110,6 +1110,79 @@ const problemData = {
         }
 
 
+
+
+// ===============================
+// RUN PROBLEM ANALYSIS
+// ===============================
+
+const {
+  data: analysisResult,
+  error: analysisError
+} = await supabaseClient.functions.invoke(
+  "analyze-problem",
+  {
+    body: {
+      problem_id: data.id
+    }
+  }
+);
+
+// Show exact function response
+alert(
+  "Function response:\n" +
+  JSON.stringify(
+    {
+      analysisResult: analysisResult,
+      analysisError: analysisError
+    },
+    null,
+    2
+  )
+);
+
+if (analysisError) {
+
+  console.error(
+    "AI analysis error:",
+    analysisError
+  );
+
+  throw new Error(
+    "Problem was published, but analysis failed: " +
+    analysisError.message
+  );
+
+}
+
+if (!analysisResult) {
+
+  throw new Error(
+    "No analysis result was received."
+  );
+
+}
+
+console.log(
+  "ANALYSIS RESULT:",
+  analysisResult
+);
+
+if (analysisResult.analysis) {
+
+  console.log(
+    "ANALYSIS:",
+    analysisResult.analysis
+  );
+
+}
+
+
+
+
+  
+
+
         message.className =
           "message success";
 
