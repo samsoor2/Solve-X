@@ -1183,20 +1183,82 @@ if (analysisResult.analysis) {
   
 
 
-        message.className =
-          "message success";
-
-        message.textContent =
-          "Problem published successfully!";
 
 
-        document
-          .getElementById("problemForm")
-          .reset();
 
 
-        button.textContent =
-          "Published ✓";
+
+
+
+// ================================
+// RUN PROBLEM ANALYSIS
+// ================================
+
+const {
+  data: analysisResult,
+  error: analysisError
+} = await supabaseClient.functions.invoke(
+  "analyze-problem",
+  {
+    body: {
+      problem_id: data.id
+    }
+  }
+);
+
+// SHOW FUNCTION RESPONSE
+alert(
+  "Function response:\n\n" +
+  JSON.stringify(
+    {
+      analysisResult: analysisResult,
+      analysisError: analysisError
+    },
+    null,
+    2
+  )
+);
+
+console.log(
+  "ANALYSIS RESULT:",
+  analysisResult
+);
+
+console.log(
+  "ANALYSIS ERROR:",
+  analysisError
+);
+
+// ================================
+// SHOW SUCCESS
+// ================================
+
+message.className =
+  "message success";
+
+message.textContent =
+  "Problem published and analyzed successfully!";
+
+document
+  .getElementById("problemForm")
+  .reset();
+
+button.textContent =
+  "Published ✓";
+
+
+
+
+
+
+
+
+
+
+        
+        
+
+        
 
 
         setTimeout(() => {
