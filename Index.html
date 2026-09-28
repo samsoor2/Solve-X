@@ -583,6 +583,19 @@ const { data: analysisResult, error: analysisError } =
       problem_id: problemData.id
     }
   });
+
+
+alert(
+  "Function response:\n" +
+  JSON.stringify({
+    analysisResult: analysisResult,
+    analysisError: analysisError
+  }, null, 2)
+);
+
+
+
+    
 alert(
   "Function response:\n" +
   JSON.stringify({
