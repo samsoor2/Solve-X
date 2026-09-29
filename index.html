@@ -1156,8 +1156,8 @@ alert("STEP 1: Analysis code reached");
 const {
   data: analysisResult,
   error: analysisError
-} = await supabaseClient.functions.invoke(
-  "analyze-problem",
+} = supabaseClient.functions.invoke(
+  "Analyze-problem",
   {
     body: {
       problem_id: data.id
