@@ -1041,12 +1041,23 @@
         }
 
 
-       const { data: profile, error: profileError } =
+
+
+const { data: profile, error: profileError } =
   await supabaseClient
-    .from("profiles")
-    .select("id")
-    .eq("id", user.id)
+    .from("Profil")
+    .select('"Id"')
+    .eq('"Id"', user.id)
     .single();
+
+
+
+
+
+
+
+
+        
 
 if (profileError || !profile) {
   throw new Error(
@@ -1056,7 +1067,7 @@ if (profileError || !profile) {
 
 const problemData = {
 
-  client_id: profile.id,
+ client_id: profile.Id, 
 
   title: title, 
 
