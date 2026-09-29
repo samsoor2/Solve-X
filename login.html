@@ -385,13 +385,18 @@
       "sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa";
 
 
-    const client =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
-
-
+    
+const client = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
     /* =====================================
        ELEMENTS
        ===================================== */
