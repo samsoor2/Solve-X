@@ -887,7 +887,12 @@ const supabaseClient = window.supabase.createClient(
   */
 
   async function checkUser() {
+const { data: sessionData } = await supabaseClient.auth.getSession();
 
+alert(
+  "INDEX SESSION:\n" +
+  JSON.stringify(sessionData, null, 2)
+);
     const {
       data: { user },
       error
