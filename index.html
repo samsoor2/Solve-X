@@ -1077,12 +1077,9 @@ const supabaseClient = window.supabase.createClient(
 
 
 
-const { data: profile, error: profileError } =
-  await supabaseClient
-    .from("Profil")
-    .select('"Id"')
-    .eq('"Id"', user.id)
-    .single();
+const profile = {
+  Id: user.id
+};
 
 
 
