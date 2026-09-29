@@ -961,71 +961,17 @@
   );
 
 
-  // ===============================
-  // CHECK EXISTING SESSION
-  // ===============================
-
-  async function checkExistingSession() {
-
-    try {
-
-      const {
-        data,
-        error
-      } =
-        await client.auth.getSession();
 
 
-      if (error) {
-
-        console.error(
-          "SESSION CHECK ERROR:",
-          error
-        );
-
-        return;
-
-      }
 
 
-      if (
-        data &&
-        data.session &&
-        data.session.user
-      ) {
-
-        showMessage(
-          "You are already logged in. Redirecting..."
-        );
 
 
-        setTimeout(() => {
-
-          window.location.replace(
-            "index.html"
-          );
-
-        }, 300);
-
-      }
-
-    } catch (error) {
-
-      console.error(
-        "SESSION ERROR:",
-        error
-      );
-
-    }
-
-  }
 
 
-  // ===============================
-  // START
-  // ===============================
 
-  checkExistingSession();
+  
+  
 
     </script>
 
