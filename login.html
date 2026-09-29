@@ -721,24 +721,26 @@ const client = window.supabase.createClient(
               });
 
 
-            if (error) {
-              throw error;
-            }
 
 
-            if (data.session) {
-
-              showMessage(
-                "Login successful!"
-              );
 
 
-              setTimeout(() => {
+if (data.session) {
 
-                window.location.href =
-                  "index.html";
+  showMessage("Login successful!");
 
-              }, 700);
+  await new Promise(resolve => setTimeout(resolve, 300));
+
+  window.location.href = "index.html";
+
+}
+
+
+            
+            
+                
+                
+            
 
             }
 
