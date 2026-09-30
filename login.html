@@ -555,20 +555,22 @@ resetForm.addEventListener(
 
 
 
-<script>
 
+
+        
+<script>
   // =========================================================
-  // SUPABASE CONFIG
+  // SUPABASE
   // =========================================================
 
   const SUPABASE_URL =
     "https://ettgqoyssaonfzsolhsp.supabase.co";
 
   const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa";
+    "sb_publishable_adq0Y_WHIQ_MfQVwkBi-R_A_I4QWYkPa";
 
 
-  const supabaseClient =
+  const client =
     window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_PUBLISHABLE_KEY,
@@ -583,802 +585,423 @@ resetForm.addEventListener(
 
 
   // =========================================================
-  // CHECK USER
+  // ELEMENTS
   // =========================================================
 
-  async function checkUser() {
+  const authForm =
+    document.getElementById("authForm");
 
-    try {
+  const resetForm =
+    document.getElementById("resetForm");
 
-      const {
-        data,
-        error
-      } = await supabaseClient.auth.getUser();
+  const nameBox =
+    document.getElementById("nameBox");
+
+  const nameInput =
+    document.getElementById("name");
+
+  const emailInput =
+    document.getElementById("email");
+
+  const passwordInput =
+    document.getElementById("password");
+
+  const submitButton =
+    document.getElementById("submitButton");
+
+  const forgotPassword =
+    document.getElementById("forgotPassword");
+
+  const switchArea =
+    document.getElementById("switchArea");
+
+  const switchButton =
+    document.getElementById("switchButton");
+
+  const switchText =
+    document.getElementById("switchText");
+
+  const subtitle =
+    document.getElementById("subtitle");
+
+  const message =
+    document.getElementById("message");
+
+  const newPassword =
+    document.getElementById("newPassword");
+
+  const confirmPassword =
+    document.getElementById("confirmPassword");
+
+  const resetButton =
+    document.getElementById("resetButton");
 
 
-      if (error) {
+  let signupMode = false;
+
+
+  // =========================================================
+  // MESSAGE
+  // =========================================================
+
+  function showMessage(text, error = false) {
+
+    message.textContent = text;
+
+    message.style.color =
+      error ? "#ff8d8d" : "#9de4bf";
+  }
+
+
+  // =========================================================
+  // LOGIN / SIGNUP SWITCH
+  // =========================================================
+
+  switchButton.addEventListener(
+    "click",
+    function () {
+
+      signupMode = !signupMode;
+
+      showMessage("");
+
+
+      if (signupMode) {
+
+        nameBox.classList.remove("hidden");
+
+        nameInput.required = true;
+
+        submitButton.textContent =
+          "Create account";
+
+        switchText.textContent =
+          "Already have an account?";
+
+        switchButton.textContent =
+          "Login";
+
+        subtitle.textContent =
+          "Create your Solve X account.";
+
+        forgotPassword.classList.add("hidden");
+
+      } else {
+
+        nameBox.classList.add("hidden");
+
+        nameInput.required = false;
+
+        submitButton.textContent =
+          "Login";
+
+        switchText.textContent =
+          "Don't have an account?";
+
+        switchButton.textContent =
+          "Create account";
+
+        subtitle.textContent =
+          "Login to your Solve X account.";
+
+        forgotPassword.classList.remove("hidden");
+
+      }
+
+    }
+  );
+
+
+  // =========================================================
+  // LOGIN / SIGNUP
+  // =========================================================
+
+  authForm.addEventListener(
+    "submit",
+    async function (event) {
+
+      event.preventDefault();
+
+      submitButton.disabled = true;
+
+      showMessage("Please wait...");
+
+
+      try {
+
+        const email =
+          emailInput.value.trim();
+
+        const password =
+          passwordInput.value;
+
+
+        if (!email || !password) {
+
+          throw new Error(
+            "Please enter email and password."
+          );
+
+        }
+
+
+        // ===================================================
+        // SIGN UP
+        // ===================================================
+
+        if (signupMode) {
+
+          const name =
+            nameInput.value.trim();
+
+
+          if (!name) {
+
+            throw new Error(
+              "Please enter your full name."
+            );
+
+          }
+
+
+          const {
+            data,
+            error
+          } =
+            await client.auth.signUp({
+
+              email: email,
+
+              password: password,
+
+              options: {
+
+                data: {
+                  full_name: name
+                },
+
+                emailRedirectTo:
+                  "https://solve-x-tawny.vercel.app/login.html"
+
+              }
+
+            });
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          showMessage(
+            "Account created. Check your email and confirm your account."
+          );
+
+
+          authForm.reset();
+
+          return;
+        }
+
+
+        // ===================================================
+        // LOGIN
+        // ===================================================
+
+        const {
+          data,
+          error
+        } =
+          await client.auth.signInWithPassword({
+
+            email: email,
+
+            password: password
+
+          });
+
+
+        if (error) {
+
+          console.error(
+            "LOGIN ERROR:",
+            error
+          );
+
+          throw error;
+        }
+
+
+        if (!data || !data.session) {
+
+          throw new Error(
+            "Login failed: Supabase did not create a session."
+          );
+
+        }
+
+
+        console.log(
+          "LOGIN SUCCESS:",
+          data.user
+        );
+
+
+        showMessage(
+          "Login successful. Opening Solve X..."
+        );
+
+
+        passwordInput.value = "";
+
+
+        /*
+          IMPORTANT:
+          Do not manually save the token.
+          Supabase persistSession handles it.
+        */
+
+        setTimeout(
+          function () {
+
+            window.location.replace(
+              "index.html"
+            );
+
+          },
+          500
+        );
+
+      } catch (error) {
 
         console.error(
-          "GET USER ERROR:",
+          "AUTH ERROR:",
           error
         );
 
-        updateAuthUI(null);
 
-        return null;
-      }
+        showMessage(
+          error.message ||
+          "Login failed.",
+          true
+        );
 
+      } finally {
 
-      const user = data?.user || null;
+        setTimeout(
+          function () {
 
-      updateAuthUI(user);
+            submitButton.disabled = false;
 
-      return user;
-
-
-    } catch (error) {
-
-      console.error(
-        "CHECK USER ERROR:",
-        error
-      );
-
-      updateAuthUI(null);
-
-      return null;
-    }
-
-  }
-
-
-  // =========================================================
-  // UPDATE LOGIN / LOGOUT UI
-  // =========================================================
-
-  function updateAuthUI(user) {
-
-    const loginButton =
-      document.getElementById("loginButton");
-
-    const userBox =
-      document.getElementById("userBox");
-
-    const userEmail =
-      document.getElementById("userEmail");
-
-
-    if (!loginButton || !userBox) {
-      return;
-    }
-
-
-    if (user) {
-
-      loginButton.style.display =
-        "none";
-
-      userBox.style.display =
-        "flex";
-
-
-      if (userEmail) {
-
-        userEmail.textContent =
-          user.email || "";
-
-      }
-
-    } else {
-
-      loginButton.style.display =
-        "inline-block";
-
-      userBox.style.display =
-        "none";
-
-
-      if (userEmail) {
-
-        userEmail.textContent =
-          "";
+          },
+          700
+        );
 
       }
 
     }
-
-  }
-
-
-  // =========================================================
-  // OPEN PROBLEM MODAL
-  // =========================================================
-
-  async function openProblemModal() {
-
-    const user =
-      await checkUser();
-
-
-    if (!user) {
-
-      alert(
-        "Please login first."
-      );
-
-      window.location.href =
-        "login.html";
-
-      return;
-
-    }
-
-
-    const modal =
-      document.getElementById(
-        "problemModal"
-      );
-
-
-    if (!modal) {
-
-      alert(
-        "Problem modal was not found in index.html."
-      );
-
-      return;
-
-    }
-
-
-    modal.style.display =
-      "block";
-
-
-    document.body.style.overflow =
-      "hidden";
-
-  }
+  );
 
 
   // =========================================================
-  // CLOSE PROBLEM MODAL
+  // FORGOT PASSWORD
   // =========================================================
 
-  function closeProblemModal() {
+  forgotPassword.addEventListener(
+    "click",
+    async function () {
 
-    const modal =
-      document.getElementById(
-        "problemModal"
-      );
-
-
-    if (modal) {
-
-      modal.style.display =
-        "none";
-
-    }
+      const email =
+        emailInput.value.trim();
 
 
-    document.body.style.overflow =
-      "auto";
+      if (!email) {
 
-  }
+        showMessage(
+          "Enter your email first.",
+          true
+        );
 
+        emailInput.focus();
 
-  // =========================================================
-  // QUICK PROBLEM INPUT
-  // =========================================================
-
-  function openProblemFromInput() {
-
-    const input =
-      document.getElementById(
-        "problemInput"
-      );
-
-
-    const text =
-      input
-        ? input.value.trim()
-        : "";
-
-
-    openProblemModal().then(() => {
-
-      if (!text) {
         return;
       }
 
 
-      const title =
-        document.getElementById(
-          "title"
+      forgotPassword.disabled = true;
+
+      showMessage(
+        "Sending password reset email..."
+      );
+
+
+      try {
+
+        const {
+          error
+        } =
+          await client.auth.resetPasswordForEmail(
+            email,
+            {
+              redirectTo:
+                "https://solve-x-tawny.vercel.app/login.html"
+            }
+          );
+
+
+        if (error) {
+
+          throw error;
+
+        }
+
+
+        showMessage(
+          "Password reset email sent. Check your email."
         );
 
-      const description =
-        document.getElementById(
-          "description"
+      } catch (error) {
+
+        console.error(
+          "RESET ERROR:",
+          error
         );
 
 
-      if (title) {
+        showMessage(
+          error.message ||
+          "Could not send password reset email.",
+          true
+        );
 
-        title.value =
-          text.substring(0, 100);
+      } finally {
 
-      }
-
-
-      if (description) {
-
-        description.value =
-          text;
+        forgotPassword.disabled = false;
 
       }
-
-    });
-
-  }
-
-
-  // =========================================================
-  // LOGOUT
-  // =========================================================
-
-  async function logout() {
-
-    try {
-
-      const {
-        error
-      } =
-        await supabaseClient.auth.signOut({
-          scope: "local"
-        });
-
-
-      if (error) {
-
-        throw error;
-
-      }
-
-
-      updateAuthUI(null);
-
-
-      alert(
-        "Logout successful."
-      );
-
-
-    } catch (error) {
-
-      console.error(
-        "LOGOUT ERROR:",
-        error
-      );
-
-
-      alert(
-        "Logout failed: " +
-        (error.message || error)
-      );
 
     }
-
-  }
+  );
 
 
   // =========================================================
-  // PROBLEM FORM
+  // RESET PASSWORD SCREEN
   // =========================================================
 
-  const problemForm =
-    document.getElementById(
-      "problemForm"
-    );
+  function showResetScreen() {
 
+    authForm.classList.add("hidden");
 
-  if (problemForm) {
+    resetForm.classList.remove("hidden");
 
-    problemForm.addEventListener(
-      "submit",
-      async function(event) {
+    switchArea.classList.add("hidden");
 
-        event.preventDefault();
+    subtitle.textContent =
+      "Create a new password for your Solve X account.";
 
+    showMessage("");
 
-        const message =
-          document.getElementById(
-            "formMessage"
-          );
-
-
-        const button =
-          document.getElementById(
-            "submitProblemButton"
-          );
-
-
-        if (message) {
-
-          message.className =
-            "message";
-
-          message.textContent =
-            "";
-
-        }
-
-
-        if (button) {
-
-          button.disabled =
-            true;
-
-          button.textContent =
-            "Publishing...";
-
-        }
-
-
-        try {
-
-          // =================================================
-          // GET CURRENT USER
-          // =================================================
-
-          const {
-            data: userData,
-            error: userError
-          } =
-            await supabaseClient.auth.getUser();
-
-
-          if (userError) {
-
-            throw new Error(
-              "Could not verify your login: " +
-              userError.message
-            );
-
-          }
-
-
-          const user =
-            userData?.user;
-
-
-          if (!user) {
-
-            alert(
-              "Your login session is missing. Please login again."
-            );
-
-
-            window.location.href =
-              "login.html";
-
-
-            return;
-
-          }
-
-
-          // =================================================
-          // READ FORM
-          // =================================================
-
-          const title =
-            document
-              .getElementById("title")
-              .value
-              .trim();
-
-
-          const description =
-            document
-              .getElementById("description")
-              .value
-              .trim();
-
-
-          const category =
-            document
-              .getElementById("category")
-              .value;
-
-
-          const budgetMinValue =
-            document
-              .getElementById("budgetMin")
-              .value
-              .trim();
-
-
-          const budgetMaxValue =
-            document
-              .getElementById("budgetMax")
-              .value
-              .trim();
-
-
-          const deadline =
-            document
-              .getElementById("deadline")
-              .value;
-
-
-          const successMetric =
-            document
-              .getElementById("successMetric")
-              .value
-              .trim();
-
-
-          // =================================================
-          // VALIDATION
-          // =================================================
-
-          if (
-            !title ||
-            !description ||
-            !category
-          ) {
-
-            throw new Error(
-              "Please fill in the required fields."
-            );
-
-          }
-
-
-          if (
-            budgetMinValue &&
-            budgetMaxValue &&
-            Number(budgetMinValue) >
-            Number(budgetMaxValue)
-          ) {
-
-            throw new Error(
-              "Minimum budget cannot be greater than maximum budget."
-            );
-
-          }
-
-
-          // =================================================
-          // CREATE PROBLEM
-          // =================================================
-
-          const problemData = {
-
-            client_id:
-              user.id,
-
-            title:
-              title,
-
-            description:
-              description,
-
-            category:
-              category,
-
-            budget_min:
-              budgetMinValue
-                ? Number(budgetMinValue)
-                : null,
-
-            budget_max:
-              budgetMaxValue
-                ? Number(budgetMaxValue)
-                : null,
-
-            deadline:
-              deadline || null,
-
-            success_metric:
-              successMetric || null,
-
-            status:
-              "open"
-
-          };
-
-
-          console.log(
-            "CREATING PROBLEM:",
-            problemData
-          );
-
-
-          const {
-            data: createdProblem,
-            error: problemError
-          } =
-            await supabaseClient
-              .from("Problems")
-              .insert(problemData)
-              .select()
-              .single();
-
-
-          // =================================================
-          // DATABASE INSERT ERROR
-          // =================================================
-
-          if (problemError) {
-
-            console.error(
-              "PROBLEM INSERT ERROR:",
-              problemError
-            );
-
-
-            throw new Error(
-              "Could not publish problem: " +
-              problemError.message
-            );
-
-          }
-
-
-          if (
-            !createdProblem ||
-            !createdProblem.id
-          ) {
-
-            throw new Error(
-              "Problem was not created. No problem ID was returned."
-            );
-
-          }
-
-
-          console.log(
-            "PROBLEM CREATED:",
-            createdProblem
-          );
-
-
-          // =================================================
-          // PROBLEM IS NOW PUBLISHED
-          // =================================================
-
-          /*
-            IMPORTANT:
-
-            From this point the Problem has already
-            been inserted into the Problems table.
-
-            AI analysis is separate.
-
-            If AI fails, the Problem remains published.
-          */
-
-
-          if (message) {
-
-            message.className =
-              "message success";
-
-            message.textContent =
-              "Problem published successfully. Analyzing...";
-          }
-
-
-          // =================================================
-          // RUN AI ANALYSIS
-          // =================================================
-
-          let analysisResult =
-            null;
-
-          let analysisError =
-            null;
-
-
-          try {
-
-            const result =
-              await supabaseClient.functions.invoke(
-                "Analyze-problem",
-                {
-                  body: {
-                    problem_id:
-                      createdProblem.id
-                  }
-                }
-              );
-
-
-            analysisResult =
-              result.data;
-
-            analysisError =
-              result.error;
-
-
-            console.log(
-              "ANALYSIS RESULT:",
-              analysisResult
-            );
-
-
-            console.log(
-              "ANALYSIS ERROR:",
-              analysisError
-            );
-
-
-          } catch (functionError) {
-
-            console.error(
-              "FUNCTION INVOKE ERROR:",
-              functionError
-            );
-
-
-            analysisError =
-              functionError;
-
-          }
-
-
-          // =================================================
-          // ANALYSIS RESULT
-          // =================================================
-
-          if (analysisError) {
-
-            /*
-              DO NOT DELETE THE PROBLEM.
-
-              The problem was already published.
-            */
-
-            console.error(
-              "AI ANALYSIS FAILED:",
-              analysisError
-            );
-
-
-            if (message) {
-
-              message.className =
-                "message success";
-
-              message.textContent =
-                "Problem published successfully, but AI analysis failed.";
-
-            }
-
-
-            alert(
-              "Problem published successfully.\n\n" +
-              "AI analysis failed:\n" +
-              (
-                analysisError.message ||
-                JSON.stringify(
-                  analysisError
-                )
-              )
-            );
-
-
-          } else {
-
-            if (message) {
-
-              message.className =
-                "message success";
-
-              message.textContent =
-                "Problem published and analyzed successfully!";
-
-            }
-
-
-            console.log(
-              "PROBLEM + ANALYSIS SUCCESS:",
-              analysisResult
-            );
-
-          }
-
-
-          // =================================================
-          // RESET FORM
-          // =================================================
-
-          problemForm.reset();
-
-
-          if (button) {
-
-            button.textContent =
-              "Published ✓";
-
-          }
-
-
-          // =================================================
-          // CLOSE MODAL
-          // =================================================
-
-          setTimeout(() => {
-
-            closeProblemModal();
-
-
-            if (button) {
-
-              button.disabled =
-                false;
-
-              button.textContent =
-                "Publish Problem";
-
-            }
-
-
-            if (message) {
-
-              message.className =
-                "message";
-
-              message.textContent =
-                "";
-
-            }
-
-          }, 1800);
-
-
-        } catch (error) {
-
-          // =================================================
-          // MAIN ERROR
-          // =================================================
-
-          console.error(
-            "PROBLEM CREATION ERROR:",
-            error
-          );
-
-
-          if (message) {
-
-            message.className =
-              "message error";
-
-            message.textContent =
-              "Could not publish your problem: " +
-              (
-                error.message ||
-                "Unknown error"
-              );
-
-          }
-
-
-          if (button) {
-
-            button.disabled =
-              false;
-
-            button.textContent =
-              "Publish Problem";
-
-          }
-
-        }
-
-      }
-    );
+    newPassword.focus();
 
   }
 
@@ -1387,8 +1010,8 @@ resetForm.addEventListener(
   // AUTH STATE
   // =========================================================
 
-  supabaseClient.auth.onAuthStateChange(
-    function(event, session) {
+  client.auth.onAuthStateChange(
+    function (event, session) {
 
       console.log(
         "AUTH EVENT:",
@@ -1396,20 +1019,116 @@ resetForm.addEventListener(
       );
 
 
-      if (
-        session &&
-        session.user
-      ) {
+      if (event === "PASSWORD_RECOVERY") {
 
-        updateAuthUI(
-          session.user
+        showResetScreen();
+
+      }
+
+    }
+  );
+
+
+  // =========================================================
+  // RESET PASSWORD
+  // =========================================================
+
+  resetForm.addEventListener(
+    "submit",
+    async function (event) {
+
+      event.preventDefault();
+
+      resetButton.disabled = true;
+
+      showMessage(
+        "Updating password..."
+      );
+
+
+      try {
+
+        const password =
+          newPassword.value;
+
+        const confirm =
+          confirmPassword.value;
+
+
+        if (password.length < 6) {
+
+          throw new Error(
+            "Password must be at least 6 characters."
+          );
+
+        }
+
+
+        if (password !== confirm) {
+
+          throw new Error(
+            "Passwords do not match."
+          );
+
+        }
+
+
+        const {
+          error
+        } =
+          await client.auth.updateUser({
+            password: password
+          });
+
+
+        if (error) {
+
+          throw error;
+
+        }
+
+
+        showMessage(
+          "Password changed successfully."
         );
 
-      } else {
 
-        updateAuthUI(
-          null
+        newPassword.value = "";
+
+        confirmPassword.value = "";
+
+
+        setTimeout(
+          async function () {
+
+            await client.auth.signOut();
+
+            window.location.replace(
+              "login.html"
+            );
+
+          },
+          1500
         );
+
+
+      } catch (error) {
+
+        console.error(
+          "PASSWORD UPDATE ERROR:",
+          error
+        );
+
+
+        showMessage(
+          error.message ||
+          "Could not change password.",
+          true
+        );
+
+      } finally {
+
+        resetButton.disabled = false;
 
       }
 
@@ -1421,7 +1140,7 @@ resetForm.addEventListener(
   // INITIAL AUTH CHECK
   // =========================================================
 
-  async function initializeAuth() {
+  async function checkLoginSession() {
 
     try {
 
@@ -1429,70 +1148,41 @@ resetForm.addEventListener(
         data,
         error
       } =
-        await supabaseClient.auth.getSession();
+        await client.auth.getSession();
 
 
       if (error) {
 
         console.error(
-          "INITIAL SESSION ERROR:",
+          "SESSION ERROR:",
           error
         );
-
-
-        updateAuthUI(
-          null
-        );
-
 
         return;
 
       }
 
 
-      const session =
-        data?.session;
-
-
-      if (
-        session &&
-        session.user
-      ) {
+      if (data && data.session) {
 
         console.log(
-          "SESSION FOUND:",
-          session.user.email
-        );
-
-
-        updateAuthUI(
-          session.user
+          "EXISTING SESSION:",
+          data.session.user.email
         );
 
       } else {
 
         console.log(
-          "NO SESSION"
-        );
-
-
-        updateAuthUI(
-          null
+          "NO EXISTING SESSION"
         );
 
       }
 
-
     } catch (error) {
 
       console.error(
-        "AUTH INITIALIZATION ERROR:",
+        "SESSION CHECK ERROR:",
         error
-      );
-
-
-      updateAuthUI(
-        null
       );
 
     }
@@ -1500,62 +1190,9 @@ resetForm.addEventListener(
   }
 
 
-  initializeAuth();
+  checkLoginSession();
 
-
-  // =========================================================
-  // CLOSE MODAL WHEN CLICKING OUTSIDE
-  // =========================================================
-
-  const problemModal =
-    document.getElementById(
-      "problemModal"
-    );
-
-
-  if (problemModal) {
-
-    problemModal.addEventListener(
-      "click",
-      function(event) {
-
-        if (
-          event.target ===
-          problemModal
-        ) {
-
-          closeProblemModal();
-
-        }
-
-      }
-    );
-
-  }
-
-
-  // =========================================================
-  // MAKE FUNCTIONS AVAILABLE TO HTML onclick=""
-  // =========================================================
-
-  window.checkUser =
-    checkUser;
-
-  window.openProblemModal =
-    openProblemModal;
-
-  window.closeProblemModal =
-    closeProblemModal;
-
-  window.openProblemFromInput =
-    openProblemFromInput;
-
-  window.logout =
-    logout;
-
-  </script>
-        
-
+</script>
 
 
 
