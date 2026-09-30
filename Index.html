@@ -577,6 +577,14 @@ if (error) {
 }
 
 // AI analysis
+
+
+
+
+
+
+    
+
 const { data: analysisResult, error: analysisError } =
   await supabase.functions.invoke("analyze-problem", {
     body: {
@@ -584,18 +592,22 @@ const { data: analysisResult, error: analysisError } =
     }
   });
 
+console.log("ANALYSIS RESULT:", analysisResult);
+console.log("ANALYSIS ERROR:", analysisError);
+
+if (analysisError) {
+  console.error("AI analysis error:", analysisError);
+  alert(
+    "Analysis failed:\n\n" +
+    analysisError.message
+  );
+  return;
+}
 
 alert(
-  "Function response:\n" +
-  JSON.stringify({
-    analysisResult: analysisResult,
-    analysisError: analysisError
-  }, null, 2)
-);
-
-
-
-    
+  "Analysis successful:\n\n" +
+  JSON.stringify(analysisResult, null, 2)
+);    
 
   
   
