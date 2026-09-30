@@ -372,611 +372,501 @@
   </div>
 
 
-<script>
+      
 
-  const SUPABASE_URL =
-    "https://ettgqoyssaonfzsolhsp.supabase.co";
+                <script>
 
-  const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa";
+const SUPABASE_URL =
+  "https://ettgqoyssaonfzsolhsp.supabase.co";
 
-  const client = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY,
-    {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-      }
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa";
+
+const client = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
     }
-  );
-
-
-  // ===============================
-  // ELEMENTS
-  // ===============================
-
-  const authForm =
-    document.getElementById("authForm");
-
-  const resetForm =
-    document.getElementById("resetForm");
-
-  const nameBox =
-    document.getElementById("nameBox");
-
-  const nameInput =
-    document.getElementById("name");
-
-  const emailInput =
-    document.getElementById("email");
-
-  const passwordInput =
-    document.getElementById("password");
-
-  const submitButton =
-    document.getElementById("submitButton");
-
-  const forgotPassword =
-    document.getElementById("forgotPassword");
-
-  const switchArea =
-    document.getElementById("switchArea");
-
-  const switchButton =
-    document.getElementById("switchButton");
-
-  const switchText =
-    document.getElementById("switchText");
-
-  const subtitle =
-    document.getElementById("subtitle");
-
-  const message =
-    document.getElementById("message");
-
-  const newPassword =
-    document.getElementById("newPassword");
-
-  const confirmPassword =
-    document.getElementById("confirmPassword");
-
-  const resetButton =
-    document.getElementById("resetButton");
-
-
-  let signupMode = false;
-
-
-  // ===============================
-  // MESSAGE
-  // ===============================
-
-  function showMessage(text, error = false) {
-
-    message.textContent = text;
-
-    message.style.color =
-      error ? "#ff8d8d" : "#9de4bf";
-
   }
+);
 
+const authForm = document.getElementById("authForm");
+const resetForm = document.getElementById("resetForm");
 
-  // ===============================
-  // LOGIN / SIGNUP SWITCH
-  // ===============================
+const nameBox = document.getElementById("nameBox");
+const nameInput = document.getElementById("name");
 
-  switchButton.addEventListener(
-    "click",
-    () => {
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
 
-      signupMode = !signupMode;
+const submitButton = document.getElementById("submitButton");
+const forgotPassword = document.getElementById("forgotPassword");
 
-      showMessage("");
+const switchArea = document.getElementById("switchArea");
+const switchButton = document.getElementById("switchButton");
+const switchText = document.getElementById("switchText");
 
+const subtitle = document.getElementById("subtitle");
+const message = document.getElementById("message");
 
-      if (signupMode) {
+const newPassword = document.getElementById("newPassword");
+const confirmPassword = document.getElementById("confirmPassword");
+const resetButton = document.getElementById("resetButton");
 
-        nameBox.classList.remove("hidden");
+let signupMode = false;
 
-        nameInput.required = true;
 
-        submitButton.textContent =
-          "Create account";
+/* =========================
+   MESSAGE
+========================= */
 
-        switchText.textContent =
-          "Already have an account?";
+function showMessage(text, error = false) {
 
-        switchButton.textContent =
-          "Login";
+  message.textContent = text;
 
-        subtitle.textContent =
-          "Create your Solve X account.";
+  message.style.color =
+    error ? "#ff8d8d" : "#9de4bf";
 
-        forgotPassword.classList.add("hidden");
+}
 
-      } else {
 
-        nameBox.classList.add("hidden");
+/* =========================
+   LOGIN / SIGNUP SWITCH
+========================= */
 
-        nameInput.required = false;
+switchButton.addEventListener("click", () => {
 
-        submitButton.textContent =
-          "Login";
+  signupMode = !signupMode;
 
-        switchText.textContent =
-          "Don't have an account?";
+  showMessage("");
 
-        switchButton.textContent =
-          "Create account";
+  if (signupMode) {
 
-        subtitle.textContent =
-          "Login to your Solve X account.";
+    nameBox.classList.remove("hidden");
+    nameInput.required = true;
 
-        forgotPassword.classList.remove("hidden");
+    submitButton.textContent = "Create account";
 
-      }
+    switchText.textContent =
+      "Already have an account?";
 
-    }
-  );
-
-
-  // ===============================
-  // LOGIN / SIGNUP
-  // ===============================
-
-  authForm.addEventListener(
-    "submit",
-    async (event) => {
-
-      event.preventDefault();
-
-      submitButton.disabled = true;
-
-      showMessage("Please wait...");
-
-
-      try {
-
-        const email =
-          emailInput.value.trim();
-
-        const password =
-          passwordInput.value;
-
-
-        if (!email || !password) {
-
-          throw new Error(
-            "Please enter your email and password."
-          );
-
-        }
-
-
-        // =========================
-        // SIGNUP
-        // =========================
-
-        if (signupMode) {
-
-          const name =
-            nameInput.value.trim();
-
-
-          if (!name) {
-
-            throw new Error(
-              "Please enter your full name."
-            );
-
-          }
-
-
-          const {
-            data,
-            error
-          } =
-            await client.auth.signUp({
-
-              email: email,
-
-              password: password,
-
-              options: {
-
-                data: {
-                  full_name: name
-                },
-
-                emailRedirectTo:
-                  "https://solve-x-tawny.vercel.app/login.html"
-
-              }
-
-            });
-
-
-          if (error) {
-
-            throw error;
-
-          }
-
-
-          showMessage(
-            "Account created. Please check your email and confirm your account."
-          );
-
-
-          return;
-
-        }
-
-
-        // =========================
-        // LOGIN
-        // =========================
-
-        const {
-          data,
-          error
-        } =
-          await client.auth.signInWithPassword({
-
-            email: email,
-
-            password: password
-
-          });
-
-
-        if (error) {
-
-          throw error;
-
-        }
-
-
-        if (!data || !data.session) {
-
-          throw new Error(
-            "Login failed: no session was created."
-          );
-
-        }
-
-
-        // =========================
-        // VERIFY SESSION
-        // =========================
-
-        const {
-          data: sessionData,
-          error: sessionError
-        } =
-          await client.auth.getSession();
-
-
-        if (sessionError) {
-
-          throw sessionError;
-
-        }
-
-
-        if (
-          !sessionData ||
-          !sessionData.session
-        ) {
-
-          throw new Error(
-            "Login succeeded but the session was not saved. Please try again."
-          );
-
-        }
-
-
-        showMessage(
-          "Login successful! Redirecting..."
-        );
-
-
-        // Clear password field only
-        passwordInput.value = "";
-
-
-        // Give Supabase time to persist session
-        setTimeout(() => {
-
-          window.location.replace(
-            "index.html"
-          );
-
-        }, 500);
-
-
-      } catch (error) {
-
-        console.error(
-          "LOGIN ERROR:",
-          error
-        );
-
-
-        showMessage(
-          error.message ||
-          "Login failed.",
-          true
-        );
-
-
-      } finally {
-
-        setTimeout(() => {
-
-          submitButton.disabled = false;
-
-        }, 700);
-
-      }
-
-    }
-  );
-
-
-  // ===============================
-  // FORGOT PASSWORD
-  // ===============================
-
-  forgotPassword.addEventListener(
-    "click",
-    async () => {
-
-      const email =
-        emailInput.value.trim();
-
-
-      if (!email) {
-
-        showMessage(
-          "Enter your email first.",
-          true
-        );
-
-        emailInput.focus();
-
-        return;
-
-      }
-
-
-      forgotPassword.disabled = true;
-
-      showMessage(
-        "Sending password reset email..."
-      );
-
-
-      try {
-
-        const {
-          error
-        } =
-          await client.auth.resetPasswordForEmail(
-            email,
-            {
-              redirectTo:
-                "https://solve-x-tawny.vercel.app/login.html"
-            }
-          );
-
-
-        if (error) {
-
-          throw error;
-
-        }
-
-
-        showMessage(
-          "Password reset email sent. Check your email."
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "RESET EMAIL ERROR:",
-          error
-        );
-
-
-        showMessage(
-          error.message ||
-          "Could not send password reset email.",
-          true
-        );
-
-
-      } finally {
-
-        forgotPassword.disabled = false;
-
-      }
-
-    }
-  );
-
-
-  // ===============================
-  // PASSWORD RECOVERY SCREEN
-  // ===============================
-
-  function showResetScreen() {
-
-    authForm.classList.add("hidden");
-
-    resetForm.classList.remove("hidden");
-
-    switchArea.classList.add("hidden");
+    switchButton.textContent = "Login";
 
     subtitle.textContent =
-      "Create a new password for your Solve X account.";
+      "Create your Solve X account.";
 
-    showMessage("");
+    forgotPassword.classList.add("hidden");
 
-    newPassword.focus();
+  } else {
+
+    nameBox.classList.add("hidden");
+    nameInput.required = false;
+
+    submitButton.textContent = "Login";
+
+    switchText.textContent =
+      "Don't have an account?";
+
+    switchButton.textContent =
+      "Create account";
+
+    subtitle.textContent =
+      "Login to your Solve X account.";
+
+    forgotPassword.classList.remove("hidden");
 
   }
 
+});
 
-  // ===============================
-  // AUTH STATE CHANGE
-  // ===============================
 
-  client.auth.onAuthStateChange(
-    (event, session) => {
+/* =========================
+   LOGIN / SIGNUP
+========================= */
 
-      console.log(
-        "AUTH EVENT:",
-        event,
-        session
+authForm.addEventListener("submit", async (event) => {
+
+  event.preventDefault();
+
+  submitButton.disabled = true;
+
+  showMessage("Please wait...");
+
+  try {
+
+    const email =
+      emailInput.value.trim();
+
+    const password =
+      passwordInput.value;
+
+    if (!email || !password) {
+
+      throw new Error(
+        "Please enter your email and password."
       );
 
+    }
 
-      if (event === "PASSWORD_RECOVERY") {
 
-        showResetScreen();
+    /* =========================
+       SIGN UP
+    ========================= */
+
+    if (signupMode) {
+
+      const name =
+        nameInput.value.trim();
+
+      if (!name) {
+
+        throw new Error(
+          "Please enter your full name."
+        );
 
       }
 
-    }
-  );
+      const {
+        data,
+        error
+      } = await client.auth.signUp({
 
+        email,
+        password,
 
-  // ===============================
-  // RESET PASSWORD
-  // ===============================
+        options: {
 
-  resetForm.addEventListener(
-    "submit",
-    async (event) => {
+          data: {
+            full_name: name
+          },
 
-      event.preventDefault();
+          emailRedirectTo:
+            "https://solve-x-tawny.vercel.app/login.html"
 
-      resetButton.disabled = true;
+        }
+
+      });
+
+      if (error) {
+        throw error;
+      }
 
       showMessage(
-        "Updating password..."
+        "Account created. Please check your email and confirm your account."
       );
 
-
-      try {
-
-        const password =
-          newPassword.value;
-
-        const confirm =
-          confirmPassword.value;
+      return;
+    }
 
 
-        if (password.length < 6) {
+    /* =========================
+       LOGIN
+    ========================= */
 
-          throw new Error(
-            "Password must be at least 6 characters."
-          );
+    const {
+      data,
+      error
+    } = await client.auth.signInWithPassword({
 
-        }
+      email,
+      password
 
+    });
 
-        if (password !== confirm) {
+    if (error) {
+      throw error;
+    }
 
-          throw new Error(
-            "Passwords do not match."
-          );
+    if (!data.session) {
 
-        }
+      throw new Error(
+        "Login succeeded but no session was created."
+      );
 
-
-        const {
-          error
-        } =
-          await client.auth.updateUser({
-            password: password
-          });
-
-
-        if (error) {
-
-          throw error;
-
-        }
+    }
 
 
-        showMessage(
-          "Password changed successfully."
+    /* =========================
+       VERIFY SESSION
+    ========================= */
+
+    const {
+      data: sessionData,
+      error: sessionError
+    } =
+      await client.auth.getSession();
+
+    if (sessionError) {
+      throw sessionError;
+    }
+
+    if (!sessionData.session) {
+
+      throw new Error(
+        "Session was not saved."
+      );
+
+    }
+
+
+    showMessage(
+      "Login successful! Redirecting..."
+    );
+
+
+    passwordInput.value = "";
+
+
+    /*
+      Give Supabase a moment to persist
+      the session before redirecting.
+    */
+
+    setTimeout(() => {
+
+      window.location.href =
+        "index.html";
+
+    }, 700);
+
+
+  } catch (error) {
+
+    console.error(
+      "LOGIN ERROR:",
+      error
+    );
+
+    showMessage(
+      error.message ||
+      "Login failed.",
+      true
+    );
+
+  } finally {
+
+    setTimeout(() => {
+
+      submitButton.disabled = false;
+
+    }, 800);
+
+  }
+
+});
+
+
+/* =========================
+   FORGOT PASSWORD
+========================= */
+
+forgotPassword.addEventListener(
+  "click",
+  async () => {
+
+    const email =
+      emailInput.value.trim();
+
+    if (!email) {
+
+      showMessage(
+        "Enter your email first.",
+        true
+      );
+
+      emailInput.focus();
+
+      return;
+    }
+
+    forgotPassword.disabled = true;
+
+    showMessage(
+      "Sending password reset email..."
+    );
+
+    try {
+
+      const {
+        error
+      } =
+        await client.auth.resetPasswordForEmail(
+          email,
+          {
+            redirectTo:
+              "https://solve-x-tawny.vercel.app/login.html"
+          }
         );
 
+      if (error) {
+        throw error;
+      }
 
-        newPassword.value = "";
+      showMessage(
+        "Password reset email sent. Check your email."
+      );
 
-        confirmPassword.value = "";
+    } catch (error) {
+
+      console.error(
+        "RESET ERROR:",
+        error
+      );
+
+      showMessage(
+        error.message ||
+        "Could not send password reset email.",
+        true
+      );
+
+    } finally {
+
+      forgotPassword.disabled = false;
+
+    }
+
+  }
+);
 
 
-        setTimeout(async () => {
+/* =========================
+   RESET SCREEN
+========================= */
 
-          await client.auth.signOut();
+function showResetScreen() {
 
-          window.location.replace(
-            "login.html"
-          );
+  authForm.classList.add("hidden");
 
-        }, 1500);
+  resetForm.classList.remove("hidden");
+
+  switchArea.classList.add("hidden");
+
+  subtitle.textContent =
+    "Create a new password for your Solve X account.";
+
+  showMessage("");
+
+  newPassword.focus();
+
+}
 
 
-      } catch (error) {
+/* =========================
+   AUTH STATE
+========================= */
 
-        console.error(
-          "PASSWORD UPDATE ERROR:",
-          error
+client.auth.onAuthStateChange(
+  (event, session) => {
+
+    console.log(
+      "AUTH EVENT:",
+      event
+    );
+
+    if (event === "PASSWORD_RECOVERY") {
+
+      showResetScreen();
+
+    }
+
+  }
+);
+
+
+/* =========================
+   RESET PASSWORD
+========================= */
+
+resetForm.addEventListener(
+  "submit",
+  async (event) => {
+
+    event.preventDefault();
+
+    resetButton.disabled = true;
+
+    showMessage(
+      "Updating password..."
+    );
+
+    try {
+
+      const password =
+        newPassword.value;
+
+      const confirm =
+        confirmPassword.value;
+
+      if (password.length < 6) {
+
+        throw new Error(
+          "Password must be at least 6 characters."
         );
-
-
-        showMessage(
-          error.message ||
-          "Could not change password.",
-          true
-        );
-
-
-      } finally {
-
-        resetButton.disabled = false;
 
       }
 
+      if (password !== confirm) {
+
+        throw new Error(
+          "Passwords do not match."
+        );
+
+      }
+
+      const {
+        error
+      } =
+        await client.auth.updateUser({
+          password
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      showMessage(
+        "Password changed successfully."
+      );
+
+      newPassword.value = "";
+      confirmPassword.value = "";
+
+      setTimeout(async () => {
+
+        await client.auth.signOut();
+
+        window.location.href =
+          "login.html";
+
+      }, 1500);
+
+    } catch (error) {
+
+      console.error(
+        "PASSWORD UPDATE ERROR:",
+        error
+      );
+
+      showMessage(
+        error.message ||
+        "Could not change password.",
+        true
+      );
+
+    } finally {
+
+      resetButton.disabled = false;
+
     }
-  );
 
+  }
+);
 
-
-
-
-
-
-
-
-
-
-  
-  
-
-    </script>
-
-
-
+  </script>    
 
 
 
