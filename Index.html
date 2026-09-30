@@ -1,661 +1,1420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>SolveX — Solve Real Problems</title>
+<title>SolveX — Solve Real Problems</title>
 
-  <meta
-    name="description"
-    content="SolveX connects real-world problems with people who can solve them."
-  />
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(49,95,180,.18), transparent 30%),
+    radial-gradient(circle at 80% 20%, rgba(139,65,255,.16), transparent 30%),
+    #050914;
+  color: white;
+  min-height: 100vh;
+}
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at 20% 10%, rgba(49, 95, 180, 0.18), transparent 30%),
-        radial-gradient(circle at 80% 20%, rgba(139, 65, 255, 0.16), transparent 30%),
-        #050914;
-      color: #ffffff;
-      min-height: 100vh;
-    }
+a {
+  text-decoration: none;
+  color: inherit;
+}
 
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
+.container {
+  width: min(1120px,92%);
+  margin: auto;
+}
 
-    .container {
-      width: min(1120px, 92%);
-      margin: auto;
-    }
+nav {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
 
-    nav {
-      height: 78px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
+.logo {
+  font-size: 25px;
+  font-weight: 800;
+}
 
-    .logo {
-      font-size: 25px;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
+.logo span {
+  color: #5da9ff;
+}
 
-    .logo span {
-      color: #5da9ff;
-    }
+.nav-links {
+  display: flex;
+  gap: 28px;
+  color: #aeb9cc;
+  font-size: 14px;
+}
 
-    .nav-links {
-      display: flex;
-      gap: 28px;
-      color: #aeb9cc;
-      font-size: 14px;
-    }
+.nav-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
 
-    .nav-links a:hover {
-      color: white;
-    }
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+}
 
-    .nav-buttons {
-      display: flex;
-      gap: 10px;
-    }
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.15);
+  color: white;
+}
 
-    .btn {
-      border: 0;
-      border-radius: 10px;
-      padding: 12px 18px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 14px;
-    }
+.btn-primary {
+  color: white;
+  background: linear-gradient(135deg,#287cff,#7b42ff);
+}
 
-    .btn-outline {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.15);
-      color: white;
-    }
+.btn-danger {
+  background: rgba(255,70,70,.12);
+  border: 1px solid rgba(255,70,70,.25);
+  color: #ffb0b0;
+}
 
-    .btn-primary {
-      color: white;
-      background: linear-gradient(135deg, #287cff, #7b42ff);
-      box-shadow: 0 8px 30px rgba(68, 91, 255, 0.25);
-    }
+.user-box {
+  display: none;
+  align-items: center;
+  gap: 10px;
+}
 
-    .hero {
-      text-align: center;
-      padding: 95px 0 70px;
-    }
+.user-email {
+  color: #aeb9cc;
+  font-size: 13px;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-    .badge {
-      display: inline-block;
-      padding: 8px 14px;
-      border-radius: 50px;
-      background: rgba(79, 140, 255, 0.1);
-      border: 1px solid rgba(79, 140, 255, 0.25);
-      color: #8bbcff;
-      font-size: 13px;
-      margin-bottom: 24px;
-    }
+.hero {
+  text-align: center;
+  padding: 95px 0 70px;
+}
 
-    h1 {
-      font-size: clamp(42px, 7vw, 76px);
-      line-height: 1.02;
-      letter-spacing: -3px;
-      max-width: 900px;
-      margin: auto;
-    }
+.badge {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 50px;
+  background: rgba(79,140,255,.1);
+  border: 1px solid rgba(79,140,255,.25);
+  color: #8bbcff;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
 
-    .gradient-text {
-      background: linear-gradient(90deg, #55a7ff, #9c68ff, #43d8d0);
-      -webkit-background-clip: text;
-      color: transparent;
-    }
+h1 {
+  font-size: clamp(42px,7vw,76px);
+  line-height: 1.02;
+  letter-spacing: -3px;
+  max-width: 900px;
+  margin: auto;
+}
 
-    .hero p {
-      max-width: 650px;
-      margin: 25px auto 0;
-      color: #aab5c8;
-      font-size: 18px;
-      line-height: 1.7;
-    }
+.gradient-text {
+  background: linear-gradient(90deg,#55a7ff,#9c68ff,#43d8d0);
+  -webkit-background-clip: text;
+  color: transparent;
+}
 
-    .problem-box {
-      max-width: 720px;
-      margin: 35px auto 0;
-      padding: 8px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 16px;
-      display: flex;
-    }
+.hero p {
+  max-width: 650px;
+  margin: 25px auto 0;
+  color: #aab5c8;
+  font-size: 18px;
+  line-height: 1.7;
+}
 
-    .problem-box input {
-      flex: 1;
-      min-width: 0;
-      border: 0;
-      outline: none;
-      background: transparent;
-      color: white;
-      padding: 16px;
-      font-size: 15px;
-    }
+.problem-box {
+  max-width: 720px;
+  margin: 35px auto 0;
+  padding: 8px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  display: flex;
+}
 
-    .problem-box input::placeholder {
-      color: #78869d;
-    }
+.problem-box input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: white;
+  padding: 16px;
+  font-size: 15px;
+}
 
-    .section {
-      padding: 75px 0;
-    }
+.section {
+  padding: 75px 0;
+}
 
-    .section-title {
-      text-align: center;
-      margin-bottom: 42px;
-    }
+.section-title {
+  text-align: center;
+  margin-bottom: 42px;
+}
 
-    .section-title h2 {
-      font-size: 38px;
-      margin-bottom: 12px;
-    }
+.section-title h2 {
+  font-size: 38px;
+  margin-bottom: 12px;
+}
 
-    .section-title p {
-      color: #8996aa;
-    }
+.section-title p {
+  color: #8996aa;
+}
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 18px;
+}
 
-    .card {
-      background: rgba(255,255,255,0.045);
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 18px;
-      padding: 25px;
-      transition: 0.25s;
-    }
+.card {
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 18px;
+  padding: 25px;
+}
 
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(91, 151, 255, 0.35);
-    }
+.icon {
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(74,130,255,.13);
+  margin-bottom: 18px;
+  font-size: 21px;
+}
 
-    .icon {
-      width: 45px;
-      height: 45px;
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
-      background: rgba(74, 130, 255, 0.13);
-      margin-bottom: 18px;
-      font-size: 21px;
-    }
+.card h3 {
+  margin-bottom: 10px;
+}
 
-    .card h3 {
-      margin-bottom: 10px;
-      font-size: 19px;
-    }
+.card p {
+  color: #8f9bb0;
+  line-height: 1.6;
+  font-size: 14px;
+}
 
-    .card p {
-      color: #8f9bb0;
-      line-height: 1.6;
-      font-size: 14px;
-    }
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 15px;
+}
 
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-    }
+.step {
+  text-align: center;
+  padding: 25px 15px;
+}
 
-    .step {
-      text-align: center;
-      padding: 25px 15px;
-    }
+.number {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 16px;
+  background: linear-gradient(135deg,#287cff,#7b42ff);
+  font-weight: bold;
+}
 
-    .number {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      margin: 0 auto 16px;
-      background: linear-gradient(135deg, #287cff, #7b42ff);
-      font-weight: bold;
-    }
+.step p {
+  color: #8996aa;
+  font-size: 14px;
+  line-height: 1.5;
+}
 
-    .step h3 {
-      margin-bottom: 9px;
-    }
+.cta {
+  margin: 40px 0 80px;
+  padding: 60px 25px;
+  text-align: center;
+  border-radius: 25px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.035);
+}
 
-    .step p {
-      color: #8996aa;
-      font-size: 14px;
-      line-height: 1.5;
-    }
+.cta h2 {
+  font-size: 40px;
+  margin-bottom: 15px;
+}
 
-    .cta {
-      margin: 40px 0 80px;
-      padding: 60px 25px;
-      text-align: center;
-      border-radius: 25px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background:
-        radial-gradient(circle at center, rgba(74, 105, 255, 0.18), transparent 60%),
-        rgba(255,255,255,0.035);
-    }
+.cta p {
+  color: #929eb1;
+  margin-bottom: 25px;
+}
 
-    .cta h2 {
-      font-size: 40px;
-      margin-bottom: 15px;
-    }
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,.72);
+  padding: 20px;
+  overflow-y: auto;
+}
 
-    .cta p {
-      color: #929eb1;
-      margin-bottom: 25px;
-    }
+.modal-content {
+  width: min(650px,100%);
+  margin: 40px auto;
+  background: #0b1222;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 28px;
+}
 
-    footer {
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding: 30px 0;
-      color: #738096;
-      font-size: 13px;
-      text-align: center;
-    }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
 
-    @media (max-width: 800px) {
-      .nav-links {
-        display: none;
-      }
+.close {
+  background: transparent;
+  border: 0;
+  color: #8996aa;
+  font-size: 28px;
+  cursor: pointer;
+}
 
-      .cards {
-        grid-template-columns: 1fr;
-      }
+.form-group {
+  margin-bottom: 17px;
+}
 
-      .steps {
-        grid-template-columns: 1fr 1fr;
-      }
+.form-group label {
+  display: block;
+  margin-bottom: 7px;
+  color: #c4cede;
+  font-size: 13px;
+  font-weight: 700;
+}
 
-      .problem-box {
-        flex-direction: column;
-      }
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 10px;
+  padding: 13px;
+  outline: none;
+  background: #111a2c;
+  color: white;
+  font-size: 14px;
+}
 
-      .problem-box .btn {
-        width: 100%;
-      }
-    }
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
 
-    @media (max-width: 500px) {
-      .hero {
-        padding-top: 65px;
-      }
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
 
-      h1 {
-        letter-spacing: -2px;
-      }
+.message {
+  display: none;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 17px;
+  font-size: 13px;
+  line-height: 1.5;
+}
 
-      .steps {
-        grid-template-columns: 1fr;
-      }
+.message.success {
+  display: block;
+  background: rgba(40,200,130,.12);
+  border: 1px solid rgba(40,200,130,.25);
+  color: #91f0c2;
+}
 
-      .nav-buttons .btn-outline {
-        display: none;
-      }
-    }
-  </style>
+.message.error {
+  display: block;
+  background: rgba(255,70,70,.12);
+  border: 1px solid rgba(255,70,70,.25);
+  color: #ffaaaa;
+}
+
+footer {
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding: 30px 0;
+  color: #738096;
+  font-size: 13px;
+  text-align: center;
+}
+
+@media(max-width:800px) {
+  .nav-links {
+    display: none;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .steps {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .problem-box {
+    flex-direction: column;
+  }
+
+  .problem-box .btn {
+    width: 100%;
+  }
+}
+
+@media(max-width:500px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <nav>
-      <a href="#" class="logo">Solve<span>X</span></a>
+<nav>
 
-      <div class="nav-links">
-        <a href="#how">How It Works</a>
-        <a href="#problems">Problems</a>
-        <a href="#solutions">Solutions</a>
-      </div>
+<a href="#" class="logo">
+Solve<span>X</span>
+</a>
 
-      <div class="nav-buttons">
-        <button class="btn btn-outline" onclick="login()">Log in</button>
-        <button class="btn btn-primary" onclick="startProblem()">Post a Problem</button>
-      </div>
-    </nav>
+<div class="nav-links">
+<a href="#how">How It Works</a>
+<a href="#problems">Problems</a>
+<a href="#solutions">Solutions</a>
+</div>
 
-    <section class="hero">
+<div class="nav-buttons">
 
-      <div class="badge">
-        AI-powered problem solving marketplace
-      </div>
+<div class="user-box" id="userBox">
 
-      <h1>
-        Don't search for a service.
-        <span class="gradient-text">Solve a problem.</span>
-      </h1>
+<span class="user-email" id="userEmail"></span>
 
-      <p>
-        Describe the real problem you're facing.
-        SolveX helps analyze it, find the right people,
-        and turn ideas into measurable solutions.
-      </p>
+<button
+class="btn btn-danger"
+id="logoutButton"
+type="button"
+>
+Logout
+</button>
 
-      <div class="problem-box">
+</div>
 
-        <input
-          id="problemInput"
-          type="text"
-          placeholder="What problem are you trying to solve?"
-        />
+<a
+href="login.html"
+id="loginButton"
+class="btn btn-outline"
+>
+Log in
+</a>
 
-        <button class="btn btn-primary" onclick="analyzeProblem()">
-          Analyze Problem
-        </button>
+<button
+class="btn btn-primary"
+id="postButton"
+type="button"
+>
+Post a Problem
+</button>
 
-      </div>
+</div>
 
-    </section>
-
-
-    <section class="section" id="problems">
-
-      <div class="section-title">
-        <h2>What can SolveX help solve?</h2>
-        <p>Real problems. Real people. Real solutions.</p>
-      </div>
-
-      <div class="cards">
-
-        <div class="card">
-          <div class="icon">📈</div>
-          <h3>Business Growth</h3>
-          <p>
-            Need more customers, better conversion,
-            stronger marketing, or a new growth strategy?
-          </p>
-        </div>
-
-        <div class="card">
-          <div class="icon">💻</div>
-          <h3>Technology</h3>
-          <p>
-            Build software, fix technical problems,
-            automate workflows, or design digital products.
-          </p>
-        </div>
-
-        <div class="card">
-          <div class="icon">🎨</div>
-          <h3>Creative Problems</h3>
-          <p>
-            Find designers, writers, strategists,
-            researchers, and creative problem solvers.
-          </p>
-        </div>
-
-      </div>
-
-    </section>
+</nav>
 
 
-    <section class="section" id="how">
+<section class="hero">
 
-      <div class="section-title">
-        <h2>How SolveX Works</h2>
-        <p>From problem to solution in four simple steps.</p>
-      </div>
+<div class="badge">
+AI-powered problem solving marketplace
+</div>
 
-      <div class="steps">
+<h1>
+Don't search for a service.
+<span class="gradient-text">
+Solve a problem.
+</span>
+</h1>
 
-        <div class="step">
-          <div class="number">1</div>
-          <h3>Post</h3>
-          <p>
-            Explain the problem you need solved.
-          </p>
-        </div>
+<p>
+Describe the real problem you're facing.
+SolveX helps analyze it, find the right people,
+and turn ideas into measurable solutions.
+</p>
 
-        <div class="step">
-          <div class="number">2</div>
-          <h3>Analyze</h3>
-          <p>
-            AI helps break the problem into causes,
-            skills, and possible solution paths.
-          </p>
-        </div>
+<div class="problem-box">
 
-        <div class="step">
-          <div class="number">3</div>
-          <h3>Match</h3>
-          <p>
-            Find people with the skills needed
-            to solve your specific problem.
-          </p>
-        </div>
+<input
+id="problemInput"
+type="text"
+placeholder="What problem are you trying to solve?"
+>
 
-        <div class="step">
-          <div class="number">4</div>
-          <h3>Solve</h3>
-          <p>
-            Collaborate, verify the result,
-            and build your reputation.
-          </p>
-        </div>
+<button
+class="btn btn-primary"
+id="quickPostButton"
+type="button"
+>
+Post Problem
+</button>
 
-      </div>
+</div>
 
-    </section>
+</section>
 
 
-    <section class="section" id="solutions">
+<section class="section" id="problems">
 
-      <div class="section-title">
-        <h2>Built Around Outcomes</h2>
-        <p>
-          The goal isn't just to hire someone.
-          The goal is to solve the problem.
-        </p>
-      </div>
+<div class="section-title">
 
-      <div class="cards">
+<h2>
+What can SolveX help solve?
+</h2>
 
-        <div class="card">
-          <div class="icon">🧠</div>
-          <h3>AI Problem Analysis</h3>
-          <p>
-            Turn an unclear problem into a structured
-            problem profile.
-          </p>
-        </div>
+<p>
+Real problems. Real people. Real solutions.
+</p>
 
-        <div class="card">
-          <div class="icon">🤝</div>
-          <h3>Smart Matching</h3>
-          <p>
-            Connect problems with people whose skills
-            fit the required solution.
-          </p>
-        </div>
+</div>
 
-        <div class="card">
-          <div class="icon">🎯</div>
-          <h3>Outcome Focused</h3>
-          <p>
-            Define success before work begins and
-            verify the result when the project ends.
-          </p>
-        </div>
+<div class="cards">
 
-      </div>
+<div class="card">
+<div class="icon">📈</div>
+<h3>Business Growth</h3>
+<p>
+Need more customers, better conversion,
+stronger marketing, or a new growth strategy?
+</p>
+</div>
 
-    </section>
+<div class="card">
+<div class="icon">💻</div>
+<h3>Technology</h3>
+<p>
+Build software, fix technical problems,
+automate workflows, or design digital products.
+</p>
+</div>
 
+<div class="card">
+<div class="icon">🎨</div>
+<h3>Creative Problems</h3>
+<p>
+Find designers, writers, strategists,
+researchers, and creative problem solvers.
+</p>
+</div>
 
-    <section class="cta">
+</div>
 
-      <h2>Have a problem?</h2>
-
-      <p>
-        Don't know exactly who to hire?
-        Start by explaining the problem.
-      </p>
-
-      <button class="btn btn-primary" onclick="startProblem()">
-        Post Your Problem
-      </button>
-
-    </section>
-
-  </div>
+</section>
 
 
-  <footer>
-    © 2026 SolveX. Solve real problems with smart people.
-  </footer>
+<section class="section" id="how">
 
-<script type="module">
-  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+<div class="section-title">
+<h2>How SolveX Works</h2>
+<p>From problem to solution in four simple steps.</p>
+</div>
 
-  const SUPABASE_URL = "https://ettgqoyssaonfzsolhsp.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_ISUPABAS"
+<div class="steps">
 
-  const supabase = createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+<div class="step">
+<div class="number">1</div>
+<h3>Post</h3>
+<p>Explain the problem you need solved.</p>
+</div>
 
-  async function analyzeProblem() {
-    const input = document.getElementById("problemInput");
-    const problem = input.value.trim();
+<div class="step">
+<div class="number">2</div>
+<h3>Analyze</h3>
+<p>
+AI helps break the problem into causes,
+skills, and possible solution paths.
+</p>
+</div>
 
-    if (!problem) {
-      alert("Please describe your problem first.");
-      input.focus();
-      return;
+<div class="step">
+<div class="number">3</div>
+<h3>Match</h3>
+<p>
+Find people with the skills needed
+to solve your specific problem.
+</p>
+</div>
+
+<div class="step">
+<div class="number">4</div>
+<h3>Solve</h3>
+<p>
+Collaborate, verify the result,
+and build your reputation.
+</p>
+</div>
+
+</div>
+
+</section>
+
+
+<section class="section" id="solutions">
+
+<div class="section-title">
+<h2>Built Around Outcomes</h2>
+<p>
+The goal isn't just to hire someone.
+The goal is to solve the problem.
+</p>
+</div>
+
+<div class="cards">
+
+<div class="card">
+<div class="icon">🧠</div>
+<h3>AI Problem Analysis</h3>
+<p>
+Turn an unclear problem into a structured
+problem profile.
+</p>
+</div>
+
+<div class="card">
+<div class="icon">🤝</div>
+<h3>Smart Matching</h3>
+<p>
+Connect problems with people whose skills
+fit the required solution.
+</p>
+</div>
+
+<div class="card">
+<div class="icon">🎯</div>
+<h3>Outcome Focused</h3>
+<p>
+Define success before work begins and
+verify the result when the project ends.
+</p>
+</div>
+
+</div>
+
+</section>
+
+
+<section class="cta">
+
+<h2>Have a problem?</h2>
+
+<p>
+Don't know exactly who to hire?
+Start by explaining the problem.
+</p>
+
+<button
+class="btn btn-primary"
+id="ctaButton"
+type="button"
+>
+Post Your Problem
+</button>
+
+</section>
+
+</div>
+
+
+<footer>
+© 2026 SolveX. Solve real problems with smart people.
+</footer>
+
+
+<!-- MODAL -->
+
+<div class="modal" id="problemModal">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h2>Post a Problem</h2>
+
+<button
+class="close"
+id="closeModal"
+type="button"
+>
+×
+</button>
+
+</div>
+
+<div
+id="formMessage"
+class="message"
+></div>
+
+<form id="problemForm">
+
+<div class="form-group">
+
+<label>Problem title *</label>
+
+<input
+id="title"
+type="text"
+required
+>
+
+</div>
+
+<div class="form-group">
+
+<label>Describe the problem *</label>
+
+<textarea
+id="description"
+required
+></textarea>
+
+</div>
+
+<div class="form-group">
+
+<label>Category *</label>
+
+<select id="category" required>
+
+<option value="">
+Select category
+</option>
+
+<option value="Business">
+Business
+</option>
+
+<option value="Technology">
+Technology
+</option>
+
+<option value="Marketing">
+Marketing
+</option>
+
+<option value="Design">
+Design
+</option>
+
+<option value="Research">
+Research
+</option>
+
+<option value="Other">
+Other
+</option>
+
+</select>
+
+</div>
+
+<div class="form-row">
+
+<div class="form-group">
+
+<label>Minimum budget</label>
+
+<input
+id="budgetMin"
+type="number"
+min="0"
+step="0.01"
+>
+
+</div>
+
+<div class="form-group">
+
+<label>Maximum budget</label>
+
+<input
+id="budgetMax"
+type="number"
+min="0"
+step="0.01"
+>
+
+</div>
+
+</div>
+
+<div class="form-group">
+
+<label>Deadline</label>
+
+<input
+id="deadline"
+type="date"
+>
+
+</div>
+
+<div class="form-group">
+
+<label>What does success look like?</label>
+
+<textarea
+id="successMetric"
+placeholder="Example: Increase monthly customers by 30%"
+></textarea>
+
+</div>
+
+<button
+id="submitProblemButton"
+class="btn btn-primary"
+type="submit"
+style="width:100%;"
+>
+Publish Problem
+</button>
+
+</form>
+
+</div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL =
+"https://ettgqoyssaonfzsolhsp.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa";
+
+const supabaseClient =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
     }
+  }
+);
 
-    const {
-      data: { user },
-      error: userError
-    } = await supabase.auth.getUser();
 
-    if (userError || !user) {
-      alert("Please login first.");
-      window.location.href = "login.html";
-      return;
-    }
+/* =========================
+   ELEMENTS
+========================= */
 
-    
-    
-    const { data: problemData, error } = await supabase
-  .from("Problems")
-  .insert({
-    client_id: user.id,
-    title: problem
-  })
-  .select()
-  .single();
+const loginButton =
+document.getElementById("loginButton");
+
+const userBox =
+document.getElementById("userBox");
+
+const userEmail =
+document.getElementById("userEmail");
+
+const logoutButton =
+document.getElementById("logoutButton");
+
+const postButton =
+document.getElementById("postButton");
+
+const quickPostButton =
+document.getElementById("quickPostButton");
+
+const ctaButton =
+document.getElementById("ctaButton");
+
+const problemModal =
+document.getElementById("problemModal");
+
+const closeModal =
+document.getElementById("closeModal");
+
+const problemInput =
+document.getElementById("problemInput");
+
+
+/* =========================
+   UI AUTH STATE
+========================= */
+
+function showLoggedIn(user) {
+
+loginButton.style.display = "none";
+
+userBox.style.display = "flex";
+
+userEmail.textContent =
+user?.email || "";
+
+}
+
+
+function showLoggedOut() {
+
+loginButton.style.display =
+"inline-block";
+
+userBox.style.display =
+"none";
+
+userEmail.textContent = "";
+
+}
+
+
+/* =========================
+   CHECK SESSION
+========================= */
+
+async function checkUser() {
+
+const {
+data: { user },
+error
+} = await supabaseClient.auth.getUser();
+
+if (error || !user) {
+
+showLoggedOut();
+
+return null;
+
+}
+
+showLoggedIn(user);
+
+return user;
+
+}
+
+
+/* =========================
+   OPEN MODAL
+========================= */
+
+async function openProblemModal(text = "") {
+
+const user =
+await checkUser();
+
+if (!user) {
+
+alert("Please login first.");
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+problemModal.style.display =
+"block";
+
+document.body.style.overflow =
+"hidden";
+
+if (text) {
+
+document.getElementById("title").value =
+text.substring(0,100);
+
+document.getElementById("description").value =
+text;
+
+}
+
+}
+
+
+/* =========================
+   CLOSE MODAL
+========================= */
+
+function closeProblemModal() {
+
+problemModal.style.display =
+"none";
+
+document.body.style.overflow =
+"auto";
+
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+postButton.addEventListener(
+"click",
+() => openProblemModal()
+);
+
+ctaButton.addEventListener(
+"click",
+() => openProblemModal()
+);
+
+quickPostButton.addEventListener(
+"click",
+async () => {
+
+const text =
+problemInput.value.trim();
+
+await openProblemModal(text);
+
+}
+);
+
+closeModal.addEventListener(
+"click",
+closeProblemModal
+);
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+logoutButton.addEventListener(
+"click",
+async () => {
+
+logoutButton.disabled = true;
+
+logoutButton.textContent =
+"Logging out...";
+
+const { error } =
+await supabaseClient.auth.signOut();
 
 if (error) {
-  console.error(error);
-  alert("Could not publish your problem: " + error.message);
-  return;
-}
-
-// AI analysis
-
-
-
-
-
-
-    
-
-const { data: analysisResult, error: analysisError } =
-  await supabase.functions.invoke("analyze-problem", {
-    body: {
-      problem_id: problemData.id
-    }
-  });
-
-console.log("ANALYSIS RESULT:", analysisResult);
-console.log("ANALYSIS ERROR:", analysisError);
-
-if (analysisError) {
-  console.error("AI analysis error:", analysisError);
-  alert(
-    "Analysis failed:\n\n" +
-    analysisError.message
-  );
-  return;
-}
 
 alert(
-  "Analysis successful:\n\n" +
-  JSON.stringify(analysisResult, null, 2)
-);    
+"Logout failed:\n" +
+error.message
+);
 
-  
-  
-  
+logoutButton.disabled = false;
 
+logoutButton.textContent =
+"Logout";
 
+return;
 
-
-if (analysisError) {
-  console.error("AI analysis error:", analysisError);
-  alert("Problem was published, but AI analysis failed.");
-  return;
 }
 
-alert("Problem published successfully!");
-console.log("ANALYSIS RESULT:", analysisResult);
+showLoggedOut();
 
-if (analysisResult) {
-  const analysis = analysisResult.analysis;
+alert("Logged out successfully.");
 
-  alert(
-    "AI Analysis Complete!\n\n" +
-    "Summary:\n" + (analysis.ai_summary || "") + "\n\n" +
-    "Possible Causes:\n" +
-    (analysis.possible_causes || []).join("\n- ") + "\n\n" +
-    "Required Skills:\n" +
-    (analysis.required_skills || []).join("\n- ") + "\n\n" +
-    "Possible Solutions:\n" +
-    (analysis.possible_solutions || []).join("\n- ")
-  );
-  }
-    
+}
+);
 
-    input.value = "";
-  }
 
-  function startProblem() {
-    document.getElementById("problemInput").focus();
+/* =========================
+   AUTH STATE
+========================= */
 
-    window.scrollTo({
-      top: 250,
-      behavior: "smooth"
-    });
-  }
+supabaseClient.auth.onAuthStateChange(
+(event, session) => {
 
-  window.analyzeProblem = analyzeProblem;
-  window.startProblem = startProblem;
+console.log(
+"AUTH EVENT:",
+event
+);
+
+if (
+session &&
+session.user
+) {
+
+showLoggedIn(
+session.user
+);
+
+} else {
+
+showLoggedOut();
+
+}
+
+}
+);
+
+
+/* =========================
+   SUBMIT PROBLEM
+========================= */
+
+document
+.getElementById("problemForm")
+.addEventListener(
+"submit",
+async function(event) {
+
+event.preventDefault();
+
+const message =
+document.getElementById("formMessage");
+
+const button =
+document.getElementById(
+"submitProblemButton"
+);
+
+message.className =
+"message";
+
+message.textContent = "";
+
+button.disabled = true;
+
+button.textContent =
+"Publishing...";
+
+
+try {
+
+/* USER */
+
+const {
+data: { user },
+error: userError
+} =
+await supabaseClient.auth.getUser();
+
+if (
+userError ||
+!user
+) {
+
+throw new Error(
+"Your login session is not available. Please login again."
+);
+
+}
+
+
+/* FORM */
+
+const title =
+document.getElementById("title")
+.value.trim();
+
+const description =
+document.getElementById("description")
+.value.trim();
+
+const category =
+document.getElementById("category")
+.value;
+
+const budgetMin =
+document.getElementById("budgetMin")
+.value;
+
+const budgetMax =
+document.getElementById("budgetMax")
+.value;
+
+const deadline =
+document.getElementById("deadline")
+.value;
+
+const successMetric =
+document.getElementById("successMetric")
+.value.trim();
+
+
+if (
+!title ||
+!description ||
+!category
+) {
+
+throw new Error(
+"Please fill in title, description and category."
+);
+
+}
+
+
+if (
+budgetMin &&
+budgetMax &&
+Number(budgetMin) >
+Number(budgetMax)
+) {
+
+throw new Error(
+"Minimum budget cannot be greater than maximum budget."
+);
+
+}
+
+
+/* =========================
+   INSERT PROBLEM
+========================= */
+
+const problemData = {
+
+client_id: user.id,
+
+title: title,
+
+description: description,
+
+category: category,
+
+budget_min:
+budgetMin
+? Number(budgetMin)
+: null,
+
+budget_max:
+budgetMax
+? Number(budgetMax)
+: null,
+
+deadline:
+deadline || null,
+
+success_metric:
+successMetric || null,
+
+status: "open"
+
+};
+
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("Problems")
+.insert(problemData)
+.select()
+.single();
+
+
+if (error) {
+
+console.error(
+"PROBLEM INSERT ERROR:",
+error
+);
+
+throw new Error(
+"Problem could not be published: " +
+error.message
+);
+
+}
+
+
+console.log(
+"PROBLEM CREATED:",
+data
+);
+
+
+/* =========================
+   AI ANALYSIS
+========================= */
+
+const {
+data: analysisResult,
+error: analysisError
+} =
+await supabaseClient.functions.invoke(
+"Analyze-problem",
+{
+body: {
+problem_id: data.id
+}
+}
+);
+
+
+console.log(
+"ANALYSIS RESULT:",
+analysisResult
+);
+
+console.log(
+"ANALYSIS ERROR:",
+analysisError
+);
+
+
+/*
+IMPORTANT:
+Problem is already published.
+Even if AI fails, do NOT tell
+the user that publishing failed.
+*/
+
+if (analysisError) {
+
+console.error(
+"AI ANALYSIS ERROR:",
+analysisError
+);
+
+message.className =
+"message success";
+
+message.textContent =
+"Problem published successfully. AI analysis could not be completed.";
+
+button.disabled = false;
+
+button.textContent =
+"Publish Problem";
+
+return;
+
+}
+
+
+/* =========================
+   SUCCESS
+========================= */
+
+message.className =
+"message success";
+
+message.textContent =
+"Problem published and analyzed successfully!";
+
+
+document
+.getElementById("problemForm")
+.reset();
+
+button.textContent =
+"Published ✓";
+
+
+/* SHOW RESULT IN CONSOLE */
+
+console.log(
+"COMPLETE ANALYSIS:",
+analysisResult
+);
+
+
+setTimeout(
+() => {
+
+closeProblemModal();
+
+button.disabled = false;
+
+button.textContent =
+"Publish Problem";
+
+message.className =
+"message";
+
+},
+1800
+);
+
+
+} catch(error) {
+
+console.error(
+"PROBLEM CREATION ERROR:",
+error
+);
+
+message.className =
+"message error";
+
+message.textContent =
+error.message;
+
+button.disabled = false;
+
+button.textContent =
+"Publish Problem";
+
+}
+
+}
+);
+
+
+/* =========================
+   CLOSE OUTSIDE MODAL
+========================= */
+
+problemModal.addEventListener(
+"click",
+event => {
+
+if (
+event.target === problemModal
+) {
+
+closeProblemModal();
+
+}
+
+}
+);
+
+
+/* =========================
+   INITIAL AUTH CHECK
+========================= */
+
+checkUser();
+
 </script>
 
 </body>
-</html>
+  </html>
