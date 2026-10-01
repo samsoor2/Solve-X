@@ -652,11 +652,40 @@ if (!verifyData.session) {
   );
 }
 
-showMessage(
-  "Login successful. Opening Solve X..."
+const {
+  data: sessionCheck,
+  error: sessionCheckError
+} = await client.auth.getSession();
+
+console.log("LOGIN RESULT:", data);
+console.log("LOGIN ERROR:", error);
+console.log("SESSION CHECK:", sessionCheck);
+console.log(
+  "SESSION CHECK ERROR:",
+  sessionCheckError
 );
 
-window.location.replace("index.html"); 
+alert(
+  "LOGIN TEST\n\n" +
+  "User: " +
+  (data?.user?.email || "NONE") +
+  "\n\nSession: " +
+  (data?.session ? "EXISTS" : "NONE") +
+  "\n\nSession error: " +
+  (sessionCheckError?.message || "NONE")
+);
+
+if (!sessionCheck?.session) {
+  throw new Error(
+    "Login succeeded but session was not saved."
+  );
+}
+
+showMessage("Login successful.");
+
+setTimeout(() => {
+  window.location.replace("index.html");
+}, 1000);
 
   } catch (error) {
 
