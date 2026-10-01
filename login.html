@@ -634,20 +634,29 @@ authForm.addEventListener("submit", async (event) => {
     }
 
 
-    showMessage(
-      "Login successful. Opening Solve X..."
-    );
+   const {
+  data: verifyData,
+  error: verifyError
+} = await client.auth.getSession();
 
+console.log("LOGIN SESSION:", verifyData);
+console.log("LOGIN SESSION ERROR:", verifyError);
 
-    // Give Supabase a moment to persist the session.
+if (verifyError) {
+  throw verifyError;
+}
 
-    setTimeout(() => {
+if (!verifyData.session) {
+  throw new Error(
+    "Login succeeded, but Supabase did not save the session."
+  );
+}
 
-      window.location.href =
-        "index.html";
+showMessage(
+  "Login successful. Opening Solve X..."
+);
 
-    }, 500);
-
+window.location.replace("index.html"); 
 
   } catch (error) {
 
