@@ -373,192 +373,11 @@
 
 
       
+
+
+
+          
 <script>
-                          
-    .disabled = true;
-
-    showMessage(
-      "Sending password reset email..."
-    );
-
-    try {
-
-      const {
-        error
-      } =
-        await client.auth.resetPasswordForEmail(
-          email,
-          {
-            redirectTo:
-              "https://solve-x-tawny.vercel.app/login.html"
-          }
-        );
-
-      if (error) {
-        throw error;
-      }
-
-      showMessage(
-        "Password reset email sent. Check your email."
-      );
-
-    } catch (error) {
-
-      console.error(
-        "RESET ERROR:",
-        error
-      );
-
-      showMessage(
-        error.message ||
-        "Could not send password reset email.",
-        true
-      );
-
-    } finally {
-
-      forgotPassword.disabled = false;
-
-    }
-
-  }
-);
-
-
-/* =========================
-   RESET SCREEN
-========================= */
-
-function showResetScreen() {
-
-  authForm.classList.add("hidden");
-
-  resetForm.classList.remove("hidden");
-
-  switchArea.classList.add("hidden");
-
-  subtitle.textContent =
-    "Create a new password for your Solve X account.";
-
-  showMessage("");
-
-  newPassword.focus();
-
-}
-
-
-/* =========================
-   AUTH STATE
-========================= */
-
-client.auth.onAuthStateChange(
-  (event, session) => {
-
-    console.log(
-      "AUTH EVENT:",
-      event
-    );
-
-    if (event === "PASSWORD_RECOVERY") {
-
-      showResetScreen();
-
-    }
-
-  }
-);
-
-
-/* =========================
-   RESET PASSWORD
-========================= */
-
-resetForm.addEventListener(
-  "submit",
-  async (event) => {
-
-    event.preventDefault();
-
-    resetButton.disabled = true;
-
-    showMessage(
-      "Updating password..."
-    );
-
-    try {
-
-      const password =
-        newPassword.value;
-
-      const confirm =
-        confirmPassword.value;
-
-      if (password.length < 6) {
-
-        throw new Error(
-          "Password must be at least 6 characters."
-        );
-
-      }
-
-      if (password !== confirm) {
-
-        throw new Error(
-          "Passwords do not match."
-        );
-
-      }
-
-      const {
-        error
-      } =
-        await client.auth.updateUser({
-          password
-        });
-
-      if (error) {
-        throw error;
-      }
-
-      showMessage(
-        "Password changed successfully."
-      );
-
-      newPassword.value = "";
-      confirmPassword.value = "";
-
-      setTimeout(async () => {
-
-        await client.auth.signOut();
-
-        window.location.href =
-          "login.html";
-
-      }, 1500);
-
-    } catch (error) {
-
-      console.error(
-        "PASSWORD UPDATE ERROR:",
-        error
-      );
-
-      showMessage(
-        error.message ||
-        "Could not change password.",
-        true
-      );
-
-    } finally {
-
-
-
-
-
-
-
-        <script>
-
 const SUPABASE_URL =
   "https://ettgqoyssaonfzsolhsp.supabase.co";
 
@@ -578,27 +397,18 @@ const client = window.supabase.createClient(
 );
 
 
-// ======================================================
+// =====================================================
 // ELEMENTS
-// ======================================================
+// =====================================================
 
-const authForm =
-  document.getElementById("authForm");
+const authForm = document.getElementById("authForm");
+const resetForm = document.getElementById("resetForm");
 
-const resetForm =
-  document.getElementById("resetForm");
+const nameBox = document.getElementById("nameBox");
+const nameInput = document.getElementById("name");
 
-const nameBox =
-  document.getElementById("nameBox");
-
-const nameInput =
-  document.getElementById("name");
-
-const emailInput =
-  document.getElementById("email");
-
-const passwordInput =
-  document.getElementById("password");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
 
 const submitButton =
   document.getElementById("submitButton");
@@ -630,13 +440,12 @@ const confirmPassword =
 const resetButton =
   document.getElementById("resetButton");
 
-
 let signupMode = false;
 
 
-// ======================================================
+// =====================================================
 // MESSAGE
-// ======================================================
+// =====================================================
 
 function showMessage(text, error = false) {
 
@@ -647,9 +456,9 @@ function showMessage(text, error = false) {
 }
 
 
-// ======================================================
+// =====================================================
 // LOGIN / SIGNUP SWITCH
-// ======================================================
+// =====================================================
 
 switchButton.addEventListener("click", () => {
 
@@ -696,14 +505,15 @@ switchButton.addEventListener("click", () => {
       "Login to your Solve X account.";
 
     forgotPassword.classList.remove("hidden");
+
   }
 
 });
 
 
-// ======================================================
+// =====================================================
 // LOGIN / SIGNUP
-// ======================================================
+// =====================================================
 
 authForm.addEventListener("submit", async (event) => {
 
@@ -732,15 +542,14 @@ authForm.addEventListener("submit", async (event) => {
     }
 
 
-    // ==================================================
+    // =================================================
     // SIGNUP
-    // ==================================================
+    // =================================================
 
     if (signupMode) {
 
       const name =
         nameInput.value.trim();
-
 
       if (!name) {
 
@@ -754,28 +563,31 @@ authForm.addEventListener("submit", async (event) => {
       const {
         data,
         error
-      } = await client.auth.signUp({
+      } =
+        await client.auth.signUp({
 
-        email: email,
+          email: email,
 
-        password: password,
+          password: password,
 
-        options: {
+          options: {
 
-          data: {
-            full_name: name
-          },
+            data: {
+              full_name: name
+            },
 
-          emailRedirectTo:
-            "https://solve-x-tawny.vercel.app/login.html"
+            emailRedirectTo:
+              "https://solve-x-tawny.vercel.app/login.html"
 
-        }
+          }
 
-      });
+        });
 
 
       if (error) {
+
         throw error;
+
       }
 
 
@@ -783,33 +595,27 @@ authForm.addEventListener("submit", async (event) => {
         "Account created. Check your email to confirm your account."
       );
 
+      submitButton.disabled = false;
 
       return;
     }
 
 
-    // ==================================================
+    // =================================================
     // LOGIN
-    // ==================================================
-
-    console.log("LOGIN START:", email);
-
+    // =================================================
 
     const {
       data,
       error
     } =
       await client.auth.signInWithPassword({
+
         email: email,
+
         password: password
+
       });
-
-
-    console.log(
-      "LOGIN RESPONSE:",
-      data,
-      error
-    );
 
 
     if (error) {
@@ -828,74 +634,19 @@ authForm.addEventListener("submit", async (event) => {
     }
 
 
-    console.log(
-      "SESSION CREATED:",
-      data.session
-    );
-
-
-    // ==================================================
-    // VERIFY SESSION
-    // ==================================================
-
-    const {
-      data: sessionData,
-      error: sessionError
-    } =
-      await client.auth.getSession();
-
-
-    console.log(
-      "SAVED SESSION:",
-      sessionData,
-      sessionError
-    );
-
-
-    if (sessionError) {
-
-      throw sessionError;
-
-    }
-
-
-    if (
-      !sessionData ||
-      !sessionData.session
-    ) {
-
-      throw new Error(
-        "Session was not saved in this browser."
-      );
-
-    }
-
-
-    // ==================================================
-    // LOGIN SUCCESS
-    // ==================================================
-
     showMessage(
       "Login successful. Opening Solve X..."
     );
 
 
-    /*
-      IMPORTANT:
-
-      Do NOT clear the email/password before
-      redirecting.
-
-      Supabase already saved the session.
-    */
-
+    // Give Supabase a moment to persist the session.
 
     setTimeout(() => {
 
       window.location.href =
         "index.html";
 
-    }, 300);
+    }, 500);
 
 
   } catch (error) {
@@ -915,95 +666,98 @@ authForm.addEventListener("submit", async (event) => {
 
     submitButton.disabled = false;
 
-    return;
-
   }
 
 });
 
 
-// ======================================================
+// =====================================================
 // FORGOT PASSWORD
-// ======================================================
+// =====================================================
 
-forgotPassword.addEventListener("click", async () => {
+forgotPassword.addEventListener(
+  "click",
+  async () => {
 
-  const email =
-    emailInput.value.trim();
-
-
-  if (!email) {
-
-    showMessage(
-      "Enter your email first.",
-      true
-    );
-
-    emailInput.focus();
-
-    return;
-
-  }
+    const email =
+      emailInput.value.trim();
 
 
-  forgotPassword.disabled = true;
+    if (!email) {
 
-  showMessage(
-    "Sending password reset email..."
-  );
-
-
-  try {
-
-    const {
-      error
-    } =
-      await client.auth.resetPasswordForEmail(
-        email,
-        {
-          redirectTo:
-            "https://solve-x-tawny.vercel.app/login.html"
-        }
+      showMessage(
+        "Enter your email first.",
+        true
       );
 
+      emailInput.focus();
 
-    if (error) {
-      throw error;
+      return;
+
     }
 
 
-    showMessage(
-      "Password reset email sent. Check your email."
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "RESET ERROR:",
-      error
-    );
-
+    forgotPassword.disabled = true;
 
     showMessage(
-      error?.message ||
-      "Could not send password reset email.",
-      true
+      "Sending password reset email..."
     );
 
 
-  } finally {
+    try {
 
-    forgotPassword.disabled = false;
+      const {
+        error
+      } =
+        await client.auth.resetPasswordForEmail(
+          email,
+          {
+            redirectTo:
+              "https://solve-x-tawny.vercel.app/login.html"
+          }
+        );
+
+
+      if (error) {
+
+        throw error;
+
+      }
+
+
+      showMessage(
+        "Password reset email sent. Check your email."
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "RESET ERROR:",
+        error
+      );
+
+
+      showMessage(
+        error?.message ||
+        "Could not send password reset email.",
+        true
+      );
+
+
+    } finally {
+
+      forgotPassword.disabled = false;
+
+    }
 
   }
+);
 
-});
 
-
-// ======================================================
-// PASSWORD RESET SCREEN
-// ======================================================
+// =====================================================
+// SHOW RESET SCREEN
+// =====================================================
 
 function showResetScreen() {
 
@@ -1023,17 +777,16 @@ function showResetScreen() {
 }
 
 
-// ======================================================
+// =====================================================
 // AUTH STATE
-// ======================================================
+// =====================================================
 
 client.auth.onAuthStateChange(
   (event, session) => {
 
     console.log(
       "AUTH EVENT:",
-      event,
-      session
+      event
     );
 
 
@@ -1049,9 +802,9 @@ client.auth.onAuthStateChange(
 );
 
 
-// ======================================================
+// =====================================================
 // RESET PASSWORD
-// ======================================================
+// =====================================================
 
 resetForm.addEventListener(
   "submit",
@@ -1153,9 +906,9 @@ resetForm.addEventListener(
 );
 
 
-// ======================================================
-// IF USER IS ALREADY LOGGED IN
-// ======================================================
+// =====================================================
+// CHECK EXISTING SESSION
+// =====================================================
 
 async function checkExistingSession() {
 
@@ -1168,15 +921,15 @@ async function checkExistingSession() {
       await client.auth.getSession();
 
 
-    console.log(
-      "EXISTING SESSION:",
-      data,
-      error
-    );
-
-
     if (error) {
+
+      console.error(
+        "SESSION ERROR:",
+        error
+      );
+
       return;
+
     }
 
 
@@ -1209,10 +962,16 @@ async function checkExistingSession() {
 }
 
 
+// =====================================================
+// START
+// =====================================================
+
 checkExistingSession();
 
-</script>
+                              </script>
+          
 
+      
 
         
                 
