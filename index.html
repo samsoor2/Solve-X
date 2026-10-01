@@ -840,186 +840,226 @@
 </div>
 
 
-<!-- SUPABASE -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 
-  const SUPABASE_URL =
-    "https://ettgqoyssaonfzsolhsp.supabase.co";
+const SUPABASE_URL =
+  "https://ettgqoyssaonfzsolhsp.supabase.co";
 
-  const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa";
-
-
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa";
 
 
-
-
-
-
-
-  
-
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY,
+    {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
     }
-  }
-);
+  );
 
 
+// =====================================================
+// CHECK CURRENT USER
+// =====================================================
+
+async function checkUser() {
+
+  const {
+    data: { user },
+    error
+  } = await supabaseClient.auth.getUser();
+
+  const loginButton =
+    document.getElementById("loginButton");
+
+  const userBox =
+    document.getElementById("userBox");
+
+  const userEmail =
+    document.getElementById("userEmail");
 
 
+  if (error || !user) {
 
+    console.log("NO USER:", error);
 
-  
+    loginButton.style.display =
+      "inline-block";
 
+    userBox.style.display =
+      "none";
 
-  /*
-    CHECK CURRENT USER
-  */
-
-  async function checkUser() {
-
-
-
-
-
-
-
-
-
-
-
-    
-    const {
-      data: { user },
-      error
-    } = await supabaseClient.auth.getUser();
-
-    if (error || !user) {
-
-      document.getElementById("loginButton").style.display = "inline-block";
-      document.getElementById("userBox").style.display = "none";
-
-      return null;
-    }
-
-    document.getElementById("loginButton").style.display = "none";
-
-    document.getElementById("userBox").style.display = "flex";
-
-    document.getElementById("userEmail").textContent =
-      user.email || "";
-
-    return user;
+    return null;
   }
 
 
-  /*
-    OPEN MODAL
-  */
+  console.log(
+    "LOGGED IN:",
+    user.email
+  );
 
-  async function openProblemModal() {
 
-    const user = await checkUser();
+  loginButton.style.display =
+    "none";
 
-    if (!user) {
+  userBox.style.display =
+    "flex";
 
-      alert("Please login first.");
+  userEmail.textContent =
+    user.email || "";
 
-      window.location.href = "login.html";
 
+  return user;
+}
+
+
+// =====================================================
+// OPEN PROBLEM MODAL
+// =====================================================
+
+async function openProblemModal() {
+
+  const user =
+    await checkUser();
+
+
+  if (!user) {
+
+    alert(
+      "Please login first."
+    );
+
+    window.location.href =
+      "login.html";
+
+    return;
+  }
+
+
+  document.getElementById(
+    "problemModal"
+  ).style.display = "block";
+
+
+  document.body.style.overflow =
+    "hidden";
+}
+
+
+// =====================================================
+// CLOSE PROBLEM MODAL
+// =====================================================
+
+function closeProblemModal() {
+
+  document.getElementById(
+    "problemModal"
+  ).style.display = "none";
+
+
+  document.body.style.overflow =
+    "auto";
+}
+
+
+// =====================================================
+// QUICK PROBLEM INPUT
+// =====================================================
+
+function openProblemFromInput() {
+
+  const input =
+    document.getElementById(
+      "problemInput"
+    );
+
+
+  const text =
+    input.value.trim();
+
+
+  openProblemModal().then(() => {
+
+    if (!text) {
       return;
     }
 
-    document.getElementById("problemModal").style.display = "block";
 
-    document.body.style.overflow = "hidden";
-
-  }
-
-
-  /*
-    CLOSE MODAL
-  */
-
-  function closeProblemModal() {
-
-    document.getElementById("problemModal").style.display = "none";
-
-    document.body.style.overflow = "auto";
-
-  }
+    document.getElementById(
+      "title"
+    ).value =
+      text.substring(0, 100);
 
 
-  /*
-    QUICK PROBLEM INPUT
-  */
+    document.getElementById(
+      "description"
+    ).value =
+      text;
 
-  function openProblemFromInput() {
-
-    const input =
-      document.getElementById("problemInput");
-
-    const text =
-      input.value.trim();
-
-    openProblemModal().then(() => {
-
-      if (text) {
-
-        document.getElementById("title").value =
-          text.substring(0, 100);
-
-        document.getElementById("description").value =
-          text;
-
-      }
-
-    });
-
-  }
+  });
+}
 
 
-  /*
-    SUBMIT PROBLEM
-  */
+// =====================================================
+// SUBMIT PROBLEM
+// =====================================================
 
-  document
-    .getElementById("problemForm")
-    .addEventListener("submit", async function(event) {
+document
+  .getElementById("problemForm")
+  .addEventListener(
+    "submit",
+    async function(event) {
 
       event.preventDefault();
 
+
       const message =
-        document.getElementById("formMessage");
+        document.getElementById(
+          "formMessage"
+        );
+
 
       const button =
-        document.getElementById("submitProblemButton");
+        document.getElementById(
+          "submitProblemButton"
+        );
 
-      message.className = "message";
 
-      message.textContent = "";
+      message.className =
+        "message";
 
-      button.disabled = true;
 
-      button.textContent = "Publishing...";
+      message.textContent =
+        "";
+
+
+      button.disabled =
+        true;
+
+
+      button.textContent =
+        "Publishing...";
 
 
       try {
 
+        // ---------------------------------------------
+        // GET USER
+        // ---------------------------------------------
+
         const {
           data: { user },
           error: userError
-        } = await supabaseClient.auth.getUser();
+        } =
+          await supabaseClient.auth.getUser();
 
 
         if (userError || !user) {
@@ -1027,83 +1067,101 @@ const supabaseClient = window.supabase.createClient(
           throw new Error(
             "Your session has expired. Please login again."
           );
-
         }
 
 
+        // ---------------------------------------------
+        // FORM VALUES
+        // ---------------------------------------------
+
         const title =
-          document.getElementById("title").value.trim();
+          document.getElementById(
+            "title"
+          ).value.trim();
+
 
         const description =
-          document.getElementById("description").value.trim();
+          document.getElementById(
+            "description"
+          ).value.trim();
+
 
         const category =
-          document.getElementById("category").value;
+          document.getElementById(
+            "category"
+          ).value;
+
 
         const budgetMinValue =
-          document.getElementById("budgetMin").value;
+          document.getElementById(
+            "budgetMin"
+          ).value;
+
 
         const budgetMaxValue =
-          document.getElementById("budgetMax").value;
+          document.getElementById(
+            "budgetMax"
+          ).value;
+
 
         const deadline =
-          document.getElementById("deadline").value;
+          document.getElementById(
+            "deadline"
+          ).value;
+
 
         const successMetric =
-          document.getElementById("successMetric").value.trim();
+          document.getElementById(
+            "successMetric"
+          ).value.trim();
 
 
-        if (!title || !description || !category) {
+        // ---------------------------------------------
+        // VALIDATION
+        // ---------------------------------------------
+
+        if (
+          !title ||
+          !description ||
+          !category
+        ) {
 
           throw new Error(
             "Please fill in the required fields."
           );
-
         }
 
 
         if (
           budgetMinValue &&
           budgetMaxValue &&
-          Number(budgetMinValue) > Number(budgetMaxValue)
+          Number(budgetMinValue) >
+          Number(budgetMaxValue)
         ) {
 
           throw new Error(
             "Minimum budget cannot be greater than maximum budget."
           );
-
         }
 
 
+        // ---------------------------------------------
+        // PROBLEM DATA
+        // ---------------------------------------------
 
+        const problemData = {
 
-const profile = {
-  Id: user.id
-};
+          client_id:
+            user.id,
 
+          title:
+            title,
 
+          description:
+            description,
 
-
-
-
-
-
-        
-
-
-const problemData = {
-client_id: user.id,
- 
-
-  title: title, 
-
-          
-
-          
-
-          description: description,
-
-          category: category,
+          category:
+            category,
 
           budget_min:
             budgetMinValue
@@ -1121,162 +1179,177 @@ client_id: user.id,
           success_metric:
             successMetric || null,
 
-          status: "open"
+          status:
+            "open"
 
         };
 
 
+        // ---------------------------------------------
+        // INSERT PROBLEM
+        // ---------------------------------------------
+
         const {
           data,
           error
-        } = await supabaseClient
-          .from("Problems")
-          .insert(problemData)
-          .select()
-          .single();
+        } =
+          await supabaseClient
+            .from("Problems")
+            .insert(problemData)
+            .select()
+            .single();
 
 
         if (error) {
 
-          console.error(error);
+          console.error(
+            "PROBLEM INSERT ERROR:",
+            error
+          );
 
           throw new Error(
             error.message
           );
-
         }
 
 
-alert("STEP 1: Analysis code reached");
-
-// ===============================
-// RUN PROBLEM ANALYSIS
-// ===============================
-
-const {
-  data: analysisResult,
-  error: analysisError
-} =} = await supabaseClient.functions.invoke( (
-  "Analyze-problem",
-  {
-    body: {
-      problem_id: data.id
-    }
-  }
-);
-
-// Show exact function response
-alert(
-  "Function response:\n" +
-  JSON.stringify(
-    {
-      analysisResult: analysisResult,
-      analysisError: analysisError
-    },
-    null,
-    2
-  )
-);
-
-if (analysisError) {
-
-  console.error(
-    "AI analysis error:",
-    analysisError
-  );
-
-  throw new Error(
-    "Problem was published, but analysis failed: " +
-    analysisError.message
-  );
-
-}
-
-if (!analysisResult) {
-
-  throw new Error(
-    "No analysis result was received."
-  );
-
-}
-
-console.log(
-  "ANALYSIS RESULT:",
-  analysisResult
-);
-
-if (analysisResult.analysis) {
-
-  console.log(
-    "ANALYSIS:",
-    analysisResult.analysis
-  );
-
-}
+        console.log(
+          "PROBLEM CREATED:",
+          data
+        );
 
 
+        // ---------------------------------------------
+        // RUN PROBLEM ANALYSIS
+        // ---------------------------------------------
+
+        const {
+          data: analysisResult,
+          error: analysisError
+        } =
+          await supabaseClient.functions.invoke(
+            "Analyze-problem",
+            {
+              body: {
+                problem_id:
+                  data.id
+              }
+            }
+          );
 
 
-  
+        // ---------------------------------------------
+        // SHOW EXACT FUNCTION RESPONSE
+        // ---------------------------------------------
+
+        console.log(
+          "ANALYSIS RESULT:",
+          analysisResult
+        );
 
 
+        console.log(
+          "ANALYSIS ERROR:",
+          analysisError
+        );
 
 
+        if (analysisError) {
+
+          console.error(
+            "AI ANALYSIS ERROR:",
+            analysisError
+          );
 
 
+          /*
+            Problem is already inserted.
+            Therefore do not pretend that
+            the problem was not published.
+          */
+
+          message.className =
+            "message error";
 
 
-
-// ================================
-// RUN PROBLEM ANALYSIS
-// ================================
-
+          message.textContent =
+            "Problem was published, but AI analysis failed: " +
+            analysisError.message;
 
 
-
-// ================================
-// SHOW SUCCESS
-// ================================
-
-message.className =
-  "message success";
-
-message.textContent =
-  "Problem published and analyzed successfully!";
-
-document
-  .getElementById("problemForm")
-  .reset();
-
-button.textContent =
-  "Published ✓";
+          button.disabled =
+            false;
 
 
+          button.textContent =
+            "Publish Problem";
 
 
+          return;
+        }
 
 
+        if (!analysisResult) {
+
+          message.className =
+            "message error";
 
 
+          message.textContent =
+            "Problem was published, but no analysis result was received.";
 
 
-        
-        
+          button.disabled =
+            false;
 
-        
+
+          button.textContent =
+            "Publish Problem";
+
+
+          return;
+        }
+
+
+        // ---------------------------------------------
+        // SUCCESS
+        // ---------------------------------------------
+
+        message.className =
+          "message success";
+
+
+        message.textContent =
+          "Problem published and analyzed successfully!";
+
+
+        document
+          .getElementById(
+            "problemForm"
+          )
+          .reset();
+
+
+        button.textContent =
+          "Published ✓";
 
 
         setTimeout(() => {
 
           closeProblemModal();
 
-          button.disabled = false;
+
+          button.disabled =
+            false;
+
 
           button.textContent =
             "Publish Problem";
 
+
           message.className =
             "message";
+
 
         }, 1800);
 
@@ -1284,7 +1357,7 @@ button.textContent =
       } catch (error) {
 
         console.error(
-          "Problem creation error:",
+          "PROBLEM CREATION ERROR:",
           error
         );
 
@@ -1292,73 +1365,18 @@ button.textContent =
         message.className =
           "message error";
 
+
         message.textContent =
           "Could not publish your problem: " +
           error.message;
 
 
-        button.disabled = false;
+        button.disabled =
+          false;
+
 
         button.textContent =
           "Publish Problem";
-
-      }
-
-    });
-
-
-  /*
-    LOGOUT
-  */
-
-  async function logout() {
-
-    const {
-      error
-    } = await supabaseClient.auth.signOut();
-
-
-    if (error) {
-
-      alert(
-        "Logout failed: " +
-        error.message
-      );
-
-      return;
-    }
-
-
-    window.location.reload();
-
-  }
-
-
-  /*
-    AUTH STATE
-  */
-
-  supabaseClient.auth.onAuthStateChange(
-    async function(event, session) {
-
-      if (session && session.user) {
-
-        document.getElementById("loginButton").style.display =
-          "none";
-
-        document.getElementById("userBox").style.display =
-          "flex";
-
-        document.getElementById("userEmail").textContent =
-          session.user.email || "";
-
-      } else {
-
-        document.getElementById("loginButton").style.display =
-          "inline-block";
-
-        document.getElementById("userBox").style.display =
-          "none";
 
       }
 
@@ -1366,30 +1384,145 @@ button.textContent =
   );
 
 
-  /*
-    INITIAL LOAD
-  */
+// =====================================================
+// LOGOUT
+// =====================================================
 
-  checkUser();
+async function logout() {
+
+  console.log(
+    "LOGOUT START"
+  );
 
 
-  /*
-    CLOSE MODAL WHEN CLICKING OUTSIDE
-  */
+  const {
+    error
+  } =
+    await supabaseClient.auth.signOut();
 
-  document
-    .getElementById("problemModal")
-    .addEventListener("click", function(event) {
 
-      if (event.target === this) {
+  if (error) {
+
+    console.error(
+      "LOGOUT ERROR:",
+      error
+    );
+
+
+    alert(
+      "Logout failed: " +
+      error.message
+    );
+
+
+    return;
+  }
+
+
+  console.log(
+    "LOGOUT SUCCESS"
+  );
+
+
+  window.location.href =
+    "login.html";
+}
+
+
+// =====================================================
+// AUTH STATE
+// =====================================================
+
+supabaseClient.auth.onAuthStateChange(
+  function(event, session) {
+
+    console.log(
+      "AUTH EVENT:",
+      event
+    );
+
+
+    const loginButton =
+      document.getElementById(
+        "loginButton"
+      );
+
+
+    const userBox =
+      document.getElementById(
+        "userBox"
+      );
+
+
+    const userEmail =
+      document.getElementById(
+        "userEmail"
+      );
+
+
+    if (
+      session &&
+      session.user
+    ) {
+
+      loginButton.style.display =
+        "none";
+
+
+      userBox.style.display =
+        "flex";
+
+
+      userEmail.textContent =
+        session.user.email || "";
+
+    } else {
+
+      loginButton.style.display =
+        "inline-block";
+
+
+      userBox.style.display =
+        "none";
+
+    }
+
+  }
+);
+
+
+// =====================================================
+// INITIAL LOAD
+// =====================================================
+
+checkUser();
+
+
+// =====================================================
+// CLOSE MODAL OUTSIDE CLICK
+// =====================================================
+
+document
+  .getElementById("problemModal")
+  .addEventListener(
+    "click",
+    function(event) {
+
+      if (
+        event.target === this
+      ) {
 
         closeProblemModal();
 
       }
 
-    });
+    }
+  );
 
-</script>
+</script>          
+        
+
+
 
 </body>
         </html>
