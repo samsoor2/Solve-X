@@ -375,18 +375,16 @@
       
 
 
-
-          
 <script>
 const SUPABASE_URL =
   "https://ettgqoyssaonfzsolhsp.supabase.co";
 
-const SUPABASE_PUBLISHABLE_KEY =
+const SUPABASE_KEY =
   "sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa";
 
 const client = window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY,
+  SUPABASE_KEY,
   {
     auth: {
       persistSession: true,
@@ -396,618 +394,123 @@ const client = window.supabase.createClient(
   }
 );
 
+const form = document.getElementById("authForm");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const button = document.getElementById("submitButton");
+const message = document.getElementById("message");
 
-// =====================================================
-// ELEMENTS
-// =====================================================
-
-const authForm = document.getElementById("authForm");
-const resetForm = document.getElementById("resetForm");
-
-const nameBox = document.getElementById("nameBox");
-const nameInput = document.getElementById("name");
-
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-
-const submitButton =
-  document.getElementById("submitButton");
-
-const forgotPassword =
-  document.getElementById("forgotPassword");
-
-const switchArea =
-  document.getElementById("switchArea");
-
-const switchButton =
-  document.getElementById("switchButton");
-
-const switchText =
-  document.getElementById("switchText");
-
-const subtitle =
-  document.getElementById("subtitle");
-
-const message =
-  document.getElementById("message");
-
-const newPassword =
-  document.getElementById("newPassword");
-
-const confirmPassword =
-  document.getElementById("confirmPassword");
-
-const resetButton =
-  document.getElementById("resetButton");
-
-let signupMode = false;
-
-
-// =====================================================
-// MESSAGE
-// =====================================================
-
-function showMessage(text, error = false) {
-
+function msg(text, error = false) {
   message.textContent = text;
-
   message.style.color =
-    error ? "#ff8d8d" : "#9de4bf";
+    error ? "#ff7777" : "#9de4bf";
 }
 
+form.addEventListener("submit", async (e) => {
 
-// =====================================================
-// LOGIN / SIGNUP SWITCH
-// =====================================================
+  e.preventDefault();
 
-switchButton.addEventListener("click", () => {
+  button.disabled = true;
 
-  signupMode = !signupMode;
+  msg("Logging in...");
 
-  showMessage("");
+  const emailValue = email.value.trim();
+  const passwordValue = password.value;
 
-  if (signupMode) {
+  console.log("LOGIN START");
 
-    nameBox.classList.remove("hidden");
+  const { data, error } =
+    await client.auth.signInWithPassword({
+      email: emailValue,
+      password: passwordValue
+    });
 
-    nameInput.required = true;
+  console.log("LOGIN DATA:", data);
+  console.log("LOGIN ERROR:", error);
 
-    submitButton.textContent =
-      "Create account";
+  if (error) {
 
-    switchText.textContent =
-      "Already have an account?";
+    console.error(error);
 
-    switchButton.textContent =
-      "Login";
+    msg(error.message, true);
 
-    subtitle.textContent =
-      "Create your Solve X account.";
+    button.disabled = false;
 
-    forgotPassword.classList.add("hidden");
-
-  } else {
-
-    nameBox.classList.add("hidden");
-
-    nameInput.required = false;
-
-    submitButton.textContent =
-      "Login";
-
-    switchText.textContent =
-      "Don't have an account?";
-
-    switchButton.textContent =
-      "Create account";
-
-    subtitle.textContent =
-      "Login to your Solve X account.";
-
-    forgotPassword.classList.remove("hidden");
-
+    return;
   }
 
-});
-
-
-// =====================================================
-// LOGIN / SIGNUP
-// =====================================================
-
-authForm.addEventListener("submit", async (event) => {
-
-  event.preventDefault();
-
-  submitButton.disabled = true;
-
-  showMessage("Please wait...");
-
-
-  try {
-
-    const email =
-      emailInput.value.trim();
-
-    const password =
-      passwordInput.value;
-
-
-    if (!email || !password) {
-
-      throw new Error(
-        "Please enter your email and password."
-      );
-
-    }
-
-
-    // =================================================
-    // SIGNUP
-    // =================================================
-
-    if (signupMode) {
-
-      const name =
-        nameInput.value.trim();
-
-      if (!name) {
-
-        throw new Error(
-          "Please enter your full name."
-        );
-
-      }
-
-
-      const {
-        data,
-        error
-      } =
-        await client.auth.signUp({
-
-          email: email,
-
-          password: password,
-
-          options: {
-
-            data: {
-              full_name: name
-            },
-
-            emailRedirectTo:
-              "https://solve-x-tawny.vercel.app/login.html"
-
-          }
-
-        });
-
-
-      if (error) {
-
-        throw error;
-
-      }
-
-
-      showMessage(
-        "Account created. Check your email to confirm your account."
-      );
-
-      submitButton.disabled = false;
-
-      return;
-    }
-
-
-    // =================================================
-    // LOGIN
-    // =================================================
-
-    const {
-      data,
-      error
-    } =
-      await client.auth.signInWithPassword({
-
-        email: email,
-
-        password: password
-
-      });
-
-
-    if (error) {
-
-      throw error;
-
-    }
-
-
-    if (!data || !data.session) {
-
-      throw new Error(
-        "Login succeeded but no session was created."
-      );
-
-    }
-
-
-   const {
-  data: verifyData,
-  error: verifyError
-} = await client.auth.getSession();
-
-console.log("LOGIN SESSION:", verifyData);
-console.log("LOGIN SESSION ERROR:", verifyError);
-
-if (verifyError) {
-  throw verifyError;
-}
-
-if (!verifyData.session) {
-  throw new Error(
-    "Login succeeded, but Supabase did not save the session."
+  console.log(
+    "USER:",
+    data?.user
   );
-}
 
-const {
-  data: sessionCheck,
-  error: sessionCheckError
-} = await client.auth.getSession();
-
-console.log("LOGIN RESULT:", data);
-console.log("LOGIN ERROR:", error);
-console.log("SESSION CHECK:", sessionCheck);
-console.log(
-  "SESSION CHECK ERROR:",
-  sessionCheckError
-);
-
-alert(
-  "LOGIN TEST\n\n" +
-  "User: " +
-  (data?.user?.email || "NONE") +
-  "\n\nSession: " +
-  (data?.session ? "EXISTS" : "NONE") +
-  "\n\nSession error: " +
-  (sessionCheckError?.message || "NONE")
-);
-
-if (!sessionCheck?.session) {
-  throw new Error(
-    "Login succeeded but session was not saved."
+  console.log(
+    "SESSION:",
+    data?.session
   );
-}
 
-showMessage("Login successful.");
+  if (!data?.session) {
 
-setTimeout(() => {
-  window.location.replace("index.html");
-}, 1000);
-
-  } catch (error) {
-
-    console.error(
-      "LOGIN ERROR:",
-      error
-    );
-
-
-    showMessage(
-      error?.message ||
-      "Login failed.",
+    msg(
+      "Login returned successfully, but no session was created.",
       true
     );
 
+    button.disabled = false;
 
-    submitButton.disabled = false;
-
+    return;
   }
+
+  // Verify that the browser actually saved it.
+
+  const {
+    data: sessionData,
+    error: sessionError
+  } = await client.auth.getSession();
+
+  console.log(
+    "SAVED SESSION:",
+    sessionData
+  );
+
+  console.log(
+    "SESSION ERROR:",
+    sessionError
+  );
+
+  if (sessionError || !sessionData?.session) {
+
+    msg(
+      "Session was not saved in the browser.",
+      true
+    );
+
+    button.disabled = false;
+
+    return;
+  }
+
+  msg(
+    "LOGIN SUCCESS — SESSION EXISTS"
+  );
+
+  /*
+    IMPORTANT:
+    First test without redirect.
+  */
+
+  alert(
+    "LOGIN SUCCESS\n\n" +
+    "Email: " +
+    (data.user?.email || "none") +
+    "\n\n" +
+    "Session: EXISTS"
+  );
 
 });
+</script>
+    
 
-
-// =====================================================
-// FORGOT PASSWORD
-// =====================================================
-
-forgotPassword.addEventListener(
-  "click",
-  async () => {
-
-    const email =
-      emailInput.value.trim();
-
-
-    if (!email) {
-
-      showMessage(
-        "Enter your email first.",
-        true
-      );
-
-      emailInput.focus();
-
-      return;
-
-    }
-
-
-    forgotPassword.disabled = true;
-
-    showMessage(
-      "Sending password reset email..."
-    );
-
-
-    try {
-
-      const {
-        error
-      } =
-        await client.auth.resetPasswordForEmail(
-          email,
-          {
-            redirectTo:
-              "https://solve-x-tawny.vercel.app/login.html"
-          }
-        );
-
-
-      if (error) {
-
-        throw error;
-
-      }
-
-
-      showMessage(
-        "Password reset email sent. Check your email."
-      );
-
-
-    } catch (error) {
-
-      console.error(
-        "RESET ERROR:",
-        error
-      );
-
-
-      showMessage(
-        error?.message ||
-        "Could not send password reset email.",
-        true
-      );
-
-
-    } finally {
-
-      forgotPassword.disabled = false;
-
-    }
-
-  }
-);
-
-
-// =====================================================
-// SHOW RESET SCREEN
-// =====================================================
-
-function showResetScreen() {
-
-  authForm.classList.add("hidden");
-
-  resetForm.classList.remove("hidden");
-
-  switchArea.classList.add("hidden");
-
-  subtitle.textContent =
-    "Create a new password for your Solve X account.";
-
-  showMessage("");
-
-  newPassword.focus();
-
-}
-
-
-// =====================================================
-// AUTH STATE
-// =====================================================
-
-client.auth.onAuthStateChange(
-  (event, session) => {
-
-    console.log(
-      "AUTH EVENT:",
-      event
-    );
-
-
-    if (
-      event === "PASSWORD_RECOVERY"
-    ) {
-
-      showResetScreen();
-
-    }
-
-  }
-);
-
-
-// =====================================================
-// RESET PASSWORD
-// =====================================================
-
-resetForm.addEventListener(
-  "submit",
-  async (event) => {
-
-    event.preventDefault();
-
-    resetButton.disabled = true;
-
-    showMessage(
-      "Updating password..."
-    );
-
-
-    try {
-
-      const password =
-        newPassword.value;
-
-      const confirm =
-        confirmPassword.value;
-
-
-      if (password.length < 6) {
-
-        throw new Error(
-          "Password must be at least 6 characters."
-        );
-
-      }
-
-
-      if (password !== confirm) {
-
-        throw new Error(
-          "Passwords do not match."
-        );
-
-      }
-
-
-      const {
-        error
-      } =
-        await client.auth.updateUser({
-          password: password
-        });
-
-
-      if (error) {
-
-        throw error;
-
-      }
-
-
-      showMessage(
-        "Password changed successfully."
-      );
-
-
-      newPassword.value = "";
-
-      confirmPassword.value = "";
-
-
-      setTimeout(async () => {
-
-        await client.auth.signOut();
-
-        window.location.href =
-          "login.html";
-
-      }, 1500);
-
-
-    } catch (error) {
-
-      console.error(
-        "PASSWORD UPDATE ERROR:",
-        error
-      );
-
-
-      showMessage(
-        error?.message ||
-        "Could not change password.",
-        true
-      );
-
-
-    } finally {
-
-      resetButton.disabled = false;
-
-    }
-
-  }
-);
-
-
-// =====================================================
-// CHECK EXISTING SESSION
-// =====================================================
-
-async function checkExistingSession() {
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await client.auth.getSession();
-
-
-    if (error) {
-
-      console.error(
-        "SESSION ERROR:",
-        error
-      );
-
-      return;
-
-    }
-
-
-    if (
-      data &&
-      data.session &&
-      data.session.user
-    ) {
-
-      console.log(
-        "USER ALREADY LOGGED IN:",
-        data.session.user.email
-      );
-
-
-      window.location.href =
-        "index.html";
-
-    }
-
-  } catch (error) {
-
-    console.error(
-      "SESSION CHECK ERROR:",
-      error
-    );
-
-  }
-
-}
-
-
-// =====================================================
-// START
-// =====================================================
-
-checkExistingSession();
-
-                              </script>
-          
 
       
 
