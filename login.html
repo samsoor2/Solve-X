@@ -372,19 +372,18 @@
   </div>
 
 
-      
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 const SUPABASE_URL =
   "https://ettgqoyssaonfzsolhsp.supabase.co";
 
-const SUPABASE_KEY =
-  "sb_publishable_adq0Y_WHIQ_MfQVwkBiR-A_I4QWYkPa";
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_adq0Y_WHIQ_MfQVwkBi-Ra-I4QWYkPa";
 
 const client = window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_KEY,
+  SUPABASE_PUBLISHABLE_KEY,
   {
     auth: {
       persistSession: true,
@@ -394,123 +393,181 @@ const client = window.supabase.createClient(
   }
 );
 
-const form = document.getElementById("authForm");
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const button = document.getElementById("submitButton");
+
+// ================================
+// ELEMENTS
+// ================================
+
+const authForm = document.getElementById("authForm");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const submitButton = document.getElementById("submitButton");
 const message = document.getElementById("message");
 
-function msg(text, error = false) {
+
+// ================================
+// MESSAGE
+// ================================
+
+function showMessage(text, error = false) {
   message.textContent = text;
-  message.style.color =
-    error ? "#ff7777" : "#9de4bf";
+  message.style.color = error
+    ? "#ff8d8d"
+    : "#9de4bf";
 }
 
-form.addEventListener("submit", async (e) => {
 
-  e.preventDefault();
+// ================================
+// LOGIN
+// ================================
 
-  button.disabled = true;
+authForm.addEventListener("submit", async function(event) {
 
-  msg("Logging in...");
+  event.preventDefault();
 
-  const emailValue = email.value.trim();
-  const passwordValue = password.value;
+  submitButton.disabled = true;
 
-  console.log("LOGIN START");
+  showMessage("Logging in...");
 
-  const { data, error } =
-    await client.auth.signInWithPassword({
-      email: emailValue,
-      password: passwordValue
+  try {
+
+    const email =
+      emailInput.value.trim();
+
+    const password =
+      passwordInput.value;
+
+    if (!email || !password) {
+      throw new Error(
+        "Please enter your email and password."
+      );
+    }
+
+
+    // LOGIN
+    const {
+      data,
+      error
+    } = await client.auth.signInWithPassword({
+      email: email,
+      password: password
     });
 
-  console.log("LOGIN DATA:", data);
-  console.log("LOGIN ERROR:", error);
 
-  if (error) {
+    if (error) {
+      throw error;
+    }
 
-    console.error(error);
 
-    msg(error.message, true);
+    // CHECK SESSION
+    const {
+      data: sessionData,
+      error: sessionError
+    } = await client.auth.getSession();
 
-    button.disabled = false;
 
-    return;
-  }
+    if (sessionError) {
+      throw sessionError;
+    }
 
-  console.log(
-    "USER:",
-    data?.user
-  );
 
-  console.log(
-    "SESSION:",
-    data?.session
-  );
+    if (!sessionData.session) {
+      throw new Error(
+        "Login succeeded, but session was not found."
+      );
+    }
 
-  if (!data?.session) {
 
-    msg(
-      "Login returned successfully, but no session was created.",
+    console.log(
+      "LOGIN SUCCESS:",
+      sessionData.session.user.email
+    );
+
+
+    showMessage(
+      "Login successful. Redirecting..."
+    );
+
+
+    // IMPORTANT:
+    // مستقیم index.html ته ځي
+    window.location.replace("index.html");
+
+
+  } catch (error) {
+
+    console.error(
+      "LOGIN ERROR:",
+      error
+    );
+
+    showMessage(
+      error?.message ||
+      "Login failed.",
       true
     );
 
-    button.disabled = false;
+    submitButton.disabled = false;
 
-    return;
   }
-
-  // Verify that the browser actually saved it.
-
-  const {
-    data: sessionData,
-    error: sessionError
-  } = await client.auth.getSession();
-
-  console.log(
-    "SAVED SESSION:",
-    sessionData
-  );
-
-  console.log(
-    "SESSION ERROR:",
-    sessionError
-  );
-
-  if (sessionError || !sessionData?.session) {
-
-    msg(
-      "Session was not saved in the browser.",
-      true
-    );
-
-    button.disabled = false;
-
-    return;
-  }
-
-  msg(
-    "LOGIN SUCCESS — SESSION EXISTS"
-  );
-
-  /*
-    IMPORTANT:
-    First test without redirect.
-  */
-
-  alert(
-    "LOGIN SUCCESS\n\n" +
-    "Email: " +
-    (data.user?.email || "none") +
-    "\n\n" +
-    "Session: EXISTS"
-  );
 
 });
-</script>
-    
 
+
+// ================================
+// CHECK EXISTING SESSION
+// ================================
+
+async function checkExistingSession() {
+
+  try {
+
+    const {
+      data,
+      error
+    } = await client.auth.getSession();
+
+
+    if (error) {
+      console.error(
+        "SESSION CHECK ERROR:",
+        error
+      );
+      return;
+    }
+
+
+    if (
+      data &&
+      data.session &&
+      data.session.user
+    ) {
+
+      console.log(
+        "Existing session:",
+        data.session.user.email
+      );
+
+      window.location.replace("index.html");
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "EXISTING SESSION ERROR:",
+      error
+    );
+
+  }
+
+}
+
+
+// Run when page opens
+checkExistingSession();
+
+</script>  
 
       
 
