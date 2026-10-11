@@ -407,7 +407,35 @@ const message = document.getElementById("message");
 
 // ================================
 // MESSAGE
-// ================================
+  
+// ===========================const nameBox = document.getElementById("nameBox");
+const nameInput = document.getElementById("name");
+const subtitle = document.getElementById("subtitle");
+const switchText = document.getElementById("switchText");
+const switchButton = document.getElementById("switchButton");
+const forgotPassword = document.getElementById("forgotPassword");
+
+let isSignUp = false;
+
+switchButton.addEventListener("click", function () {
+  isSignUp = !isSignUp;
+
+  nameBox.classList.toggle("hidden", !isSignUp);
+  nameInput.required = isSignUp;
+
+  submitButton.textContent = isSignUp ? "Create Account" : "Login";
+  switchText.textContent = isSignUp
+    ? "Already have an account?"
+    : "Don't have an account?";
+  switchButton.textContent = isSignUp ? "Login" : "Create account";
+
+  subtitle.textContent = isSignUp
+    ? "Create your Solve X account"
+    : "Login to your Solve X account";
+
+  forgotPassword.classList.toggle("hidden", isSignUp);
+  showMessage("");
+});=====
 
 function showMessage(text, error = false) {
   message.textContent = text;
