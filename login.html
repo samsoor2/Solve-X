@@ -473,14 +473,53 @@ authForm.addEventListener("submit", async function(event) {
 
 
     // LOGIN
-    const {
-      data,
-      error
-    } = await client.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
+if (isSignUp) {
+  const fullName = nameInput.value.trim();
 
+  if (!fullName) {
+    throw new Error("Please enter your full name.");
+  }
+
+  const { data, error } = await client.auth.signUp({
+    email: email,
+    password: password,
+    options: {
+      data: {
+        full_name: fullName
+      }
+    }
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data.session) {
+    showMessage("Account created! Please check your email to confirm your account.");
+    submitButton.disabled = false;
+    return;
+  }
+
+  showMessage("Account created successfully. Redirecting...");
+  window.location.replace("index.html");
+  return;
+}
+
+// LOGIN
+const {
+  data,
+  error
+} = await client.auth.signInWithPassword({
+  email: email,
+  password: password
+});
+
+
+
+
+
+
+    
 
     if (error) {
       throw error;
